@@ -1,4 +1,5 @@
 import pymysql
+from textblob import TextBlob
 
 connection = pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com', port=3306, user='admin', password='BoombaZombie', db='innodb')
 
@@ -220,3 +221,47 @@ def find_associations():
             put_event_association(id, headline[0])
             print(f'{i}/{len(headlines)}')
             i += 1
+
+def compute_sentiments():
+    items = None
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT *
+                    FROM Headline
+                    WHERE sentiment_score IS NULL
+                    LIMIT 10000                 
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    tuples = ''
+    i = 1
+    for row in items:
+        sentiment = TextBlob(row[1]).sentiment[0]
+        headline = row[1]
+        headline = headline.replace('"', '')
+        headline = headline.replace("'", '')
+        headline = headline.replace("\\", '')
+        tuples += f'({row[0]}, "{headline}", "{row[2]}", {sentiment}),'
+        print(f'{i}/{len(items)}')
+        i += 1
+    tuples = tuples[:-1]
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    INSERT INTO Headline (id, headline, date, sentiment_score)
+                    VALUES
+                    {tuples}
+                    ON DUPLICATE KEY UPDATE
+                    headline = VALUES(headline),
+                    date = VALUES(date),
+                    sentiment_score = VALUES(sentiment_score)
+                   '''
+            cursor.execute(sql)
+            connection.commit()
+    finally:
+        print('Success!')
