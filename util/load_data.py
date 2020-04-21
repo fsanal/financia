@@ -1,7 +1,7 @@
 import pymysql
 from textblob import TextBlob
 
-connection = pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com', port=3306, user='admin', password='BoombaZombie', db='innodb')
+connection = pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com', port=3306, user='admin', password='BoombaZombie', db='data')
 
 def put_dji():
     count = len(open('^DJI.csv', 'r').readlines()) - 1
@@ -240,7 +240,7 @@ def compute_sentiments():
     tuples = ''
     i = 1
     for row in items:
-        sentiment = TextBlob(row[1]).sentiment[0]
+        sentiment = TextBlob(row[1]).sentiment.polarity
         headline = row[1]
         headline = headline.replace('"', '')
         headline = headline.replace("'", '')
