@@ -5,11 +5,13 @@ import history from './history';
 import Headlines from './components/News Page/Headlines'
 
 const App = () => {
-    return (<>
-                <Router history = {history}>
-                  <Route path = "/" component = {Headlines} />
-                </Router> 
-            </>)
+  return (
+    <div>
+      <Router history = {history}>
+          <Route path = "/" component = {Headlines} />
+      </Router> 
+    </div>
+  );
 }
 
 export default App;

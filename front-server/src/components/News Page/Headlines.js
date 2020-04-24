@@ -13,24 +13,31 @@ import Button from 'react-bootstrap/Button';
 import Headline from './Headline';
 //styles
 import styled from "styled-components"
+import axios from '../../apis/api';
 
-const Headlines = () => {
-    return (
-        <>
-            <StyledNavbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">Financia</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    
-                    <FormWrap inline>
-                        <Searchbar type="text" placeholder="Search For Headlines.." />
-                        <FilterButton variant="outline-info">Filter</FilterButton>
-                    </FormWrap>
-                </Navbar.Collapse>
-            </StyledNavbar>
-            <Headline/>
-        </>
-    )
+class Headlines extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <div>
+                <StyledNavbar bg="light" expand="lg">
+                    <Navbar.Brand href="#home">Financia</Navbar.Brand>
+                    <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                    <Navbar.Collapse id="basic-navbar-nav">
+                        
+                        <FormWrap inline>
+                            <Searchbar type="text" placeholder="Search For Headlines.." />
+                            <FilterButton variant="outline-info">Filter</FilterButton>
+                        </FormWrap>
+                    </Navbar.Collapse>
+                </StyledNavbar>
+                <Headline/>
+            </div>
+        );
+    }
 }
 
 export default Headlines
