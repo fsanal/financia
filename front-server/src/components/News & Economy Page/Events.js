@@ -23,9 +23,7 @@ class Events extends React.Component {
             var events = [];
             for (var i = 0; i < response.data.data.length; i++) {
                 const item = response.data.data[i];
-                const id = item.id;
-                const event = item.name;
-                events.push(event);
+                events.push(item);
             }
 
             self.setState({
@@ -39,15 +37,24 @@ class Events extends React.Component {
     }
 
     async getEvent(event) {
-        console.log(event);
+        const self = this;
+        axios.get('/event_headlines?event_id='+event)
+        .then(function(response) {
+            console.log(response.data.data);
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
     }
 
     render() {
         var event_items = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
+            const id = event.id;
+            const name = event.name;
             event_items.push(
-                <Dropdown.Item eventKey={event} key={i}>{event}</Dropdown.Item>
+                <Dropdown.Item eventKey={id} key={id}>{name}</Dropdown.Item>
             );
         }
 

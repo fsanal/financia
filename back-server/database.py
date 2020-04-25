@@ -52,9 +52,28 @@ def scan_events():
     
     try:
         with connection.cursor() as cursor:
-            sql = '''
+            sql = f'''
                     SELECT *
                     FROM Economic_Event    
+                  '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+    
+    return items
+
+def get_headlines_for_event(event):
+    items = None
+    connection = get_session()
+    
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT headline
+                    FROM Event_Association e JOIN Headline h
+                    ON e.headline_id = h.id
+                    WHERE event_id = {event}
                   '''
             cursor.execute(sql)
             items = cursor.fetchall()

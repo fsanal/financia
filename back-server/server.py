@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from database import scan_headline, search_headlines_database, scan_events
+from database import scan_headline, search_headlines_database, scan_events, get_headlines_for_event
 
 app = Flask(__name__)
 CORS(app)
@@ -42,6 +42,15 @@ def scan_headlines():
 @app.route('/scan_event')
 def scan_event():
 	data = scan_events()
+
+	return {
+		'data': data
+	}
+
+@app.route('/event_headlines')
+def event_headlines():
+	event_id = request.args.get('event_id')
+	data = get_headlines_for_event(event_id)
 
 	return {
 		'data': data
