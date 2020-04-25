@@ -20,23 +20,39 @@ import travel_icon from '../../icons/travel.png'
 import video_icon from '../../icons/video.png'
 import world_icon from '../../icons/world.png'
 
+//misc
+import { connect } from 'react-redux';
+
 //styles
 import styled from "styled-components"
+
+//actions
+import { retrieveHeadlines } from "../../actions/Headline_Actions"
 
 
 class HeadlineDetail extends React.Component {
 
+    componentDidMount() {
+        this.props.retrieveHeadlines()
+    }
+
     render(){
+        if (!this.props.headlines){
+            return (
+                <>
+                </>
+            )
+        } 
+        let headline = this.props.headlines[this.props.match.params.id]
+        console.log(headline)
         return (
             <>
                 <JumbotronWrapper>
                 <StyledJumbotron>
                     <StyledImg2 src = {world_icon} />
-                    <Date>January 7, 2016</Date>
+                    <Date>{headline.date.split(' ').slice(0, 4).join(' ')}</Date>
                     <Wrapper>
-                        <h2>A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                            she had been born in 1898. </h2>
+                        <h2>{headline.headline} </h2>
                     </Wrapper>
                     
                     <Wrapper>
@@ -46,7 +62,7 @@ class HeadlineDetail extends React.Component {
                     <Wrapper>
                         <SentimentWrapper>
                             <StyledIcon icon={faLaughBeam} />
-                            <Sentiment >Sentiment: 0.5</Sentiment>
+                            <Sentiment >{`Sentiment: ${headline.sentiment_score}`}</Sentiment>
                         </SentimentWrapper>
                     </Wrapper>
                     <CardWrapper>
@@ -85,8 +101,14 @@ class HeadlineDetail extends React.Component {
     }  
 }
 
-/*<StyledIcon icon={faLaughBeam} />*/
-export default HeadlineDetail
+const mapStateToProps = (state) => {
+    return {
+        headlines: state.headlines
+    }
+}
+
+export default connect(mapStateToProps, {retrieveHeadlines})(HeadlineDetail);
+
 
 
 const CardWrapper = styled.div`
@@ -151,14 +173,14 @@ const StyledIcon = styled(FontAwesomeIcon)`
     display: inline;
 `
 
-const Date = styled.h3`
+const Date = styled.h4`
     margin-top: 40px;
-    margin-left: 30px;
+    margin-left: 40px;
 `
 
 const Wrapper = styled.div`
     margin-top: 40px;
-    margin-left: 30px;
+    margin-left: 40px;
     margin-right: auto;
 `
 

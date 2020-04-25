@@ -17,7 +17,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import styled from "styled-components"
 
 //actions
-import { searchHeadlines } from '../actions/Headline_Actions'
+import { searchHeadlines, retrieveHeadlines } from '../actions/Headline_Actions'
 
 //misc
 import { connect } from 'react-redux';
@@ -31,10 +31,16 @@ class Bar extends React.Component {
 
     searchText = (e) => {
         var searchQuery = e.target.value; 
-        if (this.timeout) clearTimeout(this.timeout);
-        this.timeout = setTimeout(() => {
-          this.props.searchHeadlines({searchQuery})
-        }, 300);
+        if (searchQuery.length != 1) {
+            if (e.key === 'Enter') {
+                this.props.searchHeadlines({searchQuery});
+            } else {
+                if (this.timeout) clearTimeout(this.timeout);
+                this.timeout = setTimeout(() => {
+                  this.props.searchHeadlines({searchQuery})
+                }, 700);
+            }
+        }
     }
 
     render() {
@@ -45,7 +51,7 @@ class Bar extends React.Component {
                         <FormWrap inline>
                             <SearchbarWrapper>
                                 <StyledIcon icon={faSearch} />
-                                <Searchbar onChange = {this.searchText} type="text" placeholder="Search For Headlines.." />
+                                <Searchbar onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange = {this.searchText} type="text" placeholder="Search For Headlines.." />
                             </SearchbarWrapper>
                             <FilterButton variant="outline-info">Filter</FilterButton>
                         </FormWrap>
@@ -57,7 +63,7 @@ class Bar extends React.Component {
 }
 
 
-export default connect(null, {searchHeadlines})(Bar);
+export default connect(null, {searchHeadlines, retrieveHeadlines})(Bar);
 
 const StyledIcon = styled(FontAwesomeIcon)`
     font-size: 20px;

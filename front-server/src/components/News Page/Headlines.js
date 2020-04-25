@@ -6,6 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 //components
 import HeadlineCard from './HeadlineCard';
 import { Link } from 'react-router-dom';
+import Jumbotron from 'react-bootstrap/Jumbotron'
+import Spinner from 'react-bootstrap/Spinner'
 
 //styles 
 import styled from "styled-components"
@@ -38,6 +40,12 @@ class Headlines extends React.Component {
     }
 
     renderCards() {
+        if (this.props.headlines.length == 0) {
+            return <StyledJumbotron>
+                <StyledSpinner animation="border" />
+                <h1>No Results... Please wait</h1>
+            </StyledJumbotron>
+        }
         var cards = []
         var icons = [economy_icon, micro_icon, poli_icon, train_icon, travel_icon, video_icon, world_icon]
         for (let i = 0; i <= this.props.headlines.length - 3; i += 3){
@@ -71,10 +79,17 @@ const mapStateToProps = (state) => {
 
 export default connect(mapStateToProps, {retrieveHeadlines})(Headlines);
 
+const StyledSpinner = styled(Spinner)`
+    width: 80px;
+    height: 80px;
+    margin-bottom: 80px;
+    color: #313896;
+`
 
 const Background = styled.div`
     padding-top: 150px;
-    
+    height: 100%;
+    width: 100%;
 `
 
 const CardWrapper = styled.div`
@@ -82,4 +97,15 @@ const CardWrapper = styled.div`
     margin-left: auto;
     margin-right: auto;
     width: 1200px;
+`
+
+const StyledJumbotron = styled(Jumbotron)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white !important;
+    box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
 `
