@@ -15,7 +15,7 @@ import * as d3 from 'd3'
 import styled from "styled-components"
 import axios from '../../apis/api';
 
-class BarChart extends Component {
+class LineChart extends Component {
     componentDidMount() {
       this.drawChart();
     }
@@ -54,4 +54,4 @@ class BarChart extends Component {
     }
   }
       
-  export default BarChart;
+  export default LineChart;

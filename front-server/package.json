@@ -23,7 +23,11 @@
     "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "styled-components": "^5.1.0"
+    "styled-components": "^5.1.0",
+    "d3-axis": "1.0.8",
+    "d3-array": "1.2.1",
+    "d3-scale": "2.1.0",
+    "d3-shape": "1.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
