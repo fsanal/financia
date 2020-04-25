@@ -40,7 +40,7 @@ class Headlines extends React.Component {
     }
 
     renderCards() {
-        if (this.props.headlines.length == 0) {
+        if (this.props.headlines.length === 0) {
             return <StyledJumbotron>
                 <StyledSpinner animation="border" />
                 <h1>No Results... Please wait</h1>
@@ -49,12 +49,12 @@ class Headlines extends React.Component {
         var cards = []
         var icons = [economy_icon, micro_icon, poli_icon, train_icon, travel_icon, video_icon, world_icon, poli_icon]
         console.log(this.props.headlines.length)
-        if (this.props.headlines.length == 2) {
+        if (this.props.headlines.length === 2) {
             cards.push(<CardWrapper>
                 <HeadlineCard icon = {icons[this.rand(icons.length)]} key = {this.props.headlines[0].id} item = {this.props.headlines[0]}/>
                 <HeadlineCard icon = {icons[this.rand(icons.length)]} key = {this.props.headlines[1].id} item = {this.props.headlines[1]}/>
             </CardWrapper>);
-        } else if (this.props.headlines.length == 1) {
+        } else if (this.props.headlines.length === 1) {
             cards.push(<CardWrapper>
                 <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[0].id} item = {this.props.headlines[0]}/>
             </CardWrapper>);
