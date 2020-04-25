@@ -78,6 +78,19 @@ class Events extends React.Component {
             });
     }
 
+    count(sentence, word) {
+        sentence += '';
+        word += '';
+
+        if (word.length <= 0) 
+        {
+            return sentence.length + 1;
+        }
+
+        word = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return (sentence.match(new RegExp(word, 'gi')) || []).length;
+    }
+
     render() {
         var event_items = [];
         var headlines = [];
@@ -96,8 +109,9 @@ class Events extends React.Component {
             const headline = item.headline;
             const date = item.date;
             const sentiment = item.sentiment_score;
+            const count = this.count(headline, this.state.current_event);
             headlines.push(
-                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)}></HeadlineCard>
+                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} impact_score={Math.abs((count * sentiment).toFixed(2))}></HeadlineCard>
             );
             sentiments.push(sentiment);
         }
@@ -180,9 +194,9 @@ const CardWrapper = styled.div`
 const StyledCard = styled(Card)`
     
     margin-bottom: 30px;
-    margin-left: 8vw;
+    margin-left: 6vw;
     
-    width: 30vw;
+    width: 35vw;
     height: 100vh;
     box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
     border-radius: 16px !important;

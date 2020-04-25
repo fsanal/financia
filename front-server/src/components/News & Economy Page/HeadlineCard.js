@@ -20,7 +20,7 @@ class HeadlineCard extends React.Component {
                         <Card.Title>{this.props.date}</Card.Title>
                         <Card.Text>
                             <p>{this.props.headline}</p>
-                            <h5>Impact Score: </h5>
+                            <h5>Impact Score: {this.props.impact_score}</h5>
                         </Card.Text>
                     </Card.Body>
                 </Card>
