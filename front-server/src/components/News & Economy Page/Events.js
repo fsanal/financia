@@ -1,14 +1,52 @@
 import React from 'react';
+import { Dropdown } from 'react-bootstrap';
 import styled from "styled-components";
 import Card from 'react-bootstrap/Card';
+import axios from '../../apis/api';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Events extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            'events': []
+        };
+
+        this.getEconomicEvents();
+    }
+
+    async getEconomicEvents() {
+        const self = this;
+        axios.get('/scan_event')
+        .then(function(response) {
+            var events = [];
+            for (var i = 0; i < response.data.data.length; i++) {
+                const item = response.data.data[i];
+                const id = item.id;
+                const event = item.name;
+                events.push(event);
+            }
+
+            self.setState({
+                'events': events
+            });
+            self.forceUpdate();
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
     }
 
     render() {
+        var event_items = [];
+        for (var i = 0; i < this.state.events.length; i++) {
+            const event = this.state.events[i];
+            event_items.push(
+                <Dropdown.Item href="#" key={i}>{event}</Dropdown.Item>
+            );
+        }
+
         return (
             <Background>
                 <div className="container">
@@ -16,7 +54,19 @@ class Events extends React.Component {
                         <div className="col-6">
                             <CardWrapper>
                                 <StyledCard>
-                                    
+                                    <div className="row">
+                                        <div className="col">
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                                    Economic Event
+                                                </Dropdown.Toggle>
+
+                                                <Dropdown.Menu>
+                                                    {event_items}
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </div>
+                                    </div>
                                 </StyledCard>
                             </CardWrapper>
                         </div>

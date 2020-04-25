@@ -46,6 +46,23 @@ def search_headlines_database(searchQuery, startdate, enddate):
     print(items)
     return items
 
+def scan_events():
+    items = None
+    connection = get_session()
+    
+    try:
+        with connection.cursor() as cursor:
+            sql = '''
+                    SELECT *
+                    FROM Economic_Event    
+                  '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+    
+    return items
+
 
 
 

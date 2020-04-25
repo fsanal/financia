@@ -1,6 +1,6 @@
 from flask import Flask, request
 from flask_cors import CORS
-from database import scan_headline, search_headlines_database
+from database import scan_headline, search_headlines_database, scan_events
 
 app = Flask(__name__)
 CORS(app)
@@ -35,6 +35,14 @@ def scan_headlines():
 	for item in data:
 		item['sentiment_score'] = float(item['sentiment_score'])
 	
+	return {
+		'data': data
+	}
+
+@app.route('/scan_event')
+def scan_event():
+	data = scan_events()
+
 	return {
 		'data': data
 	}
