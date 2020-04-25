@@ -41,9 +41,10 @@ class Headline extends React.Component {
                 cards.push(
                     <StyledCard border="success" style={{}}>
                         <Card.Body>
-                            <Card.Title>{headline[2]}</Card.Title>
+                            <Card.Title>{headline[2].slice(0, -13)}</Card.Title>
                             <Card.Text>
-                                {headline[1]}
+                                <h5>Sentiment Score: {headline[3].toFixed(2)}</h5>
+                                <h3>{headline[1]}</h3>
                             </Card.Text>
                         </Card.Body>
                     </StyledCard>
