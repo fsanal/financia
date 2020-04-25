@@ -12,17 +12,17 @@ def scan_headline():
             sql = '''
                     SELECT *
                     FROM Headline
-                    ORDER BY date DESC
-                    LIMIT 9;     
+                    ORDER BY date ASC
+                    LIMIT 27;     
                   '''
             cursor.execute(sql)
             items = cursor.fetchall()
     finally:
         print('Success!')
-
+    
     return items
 
-def search_headlines_database(searchQuery):
+def search_headlines_database(searchQuery, startdate, enddate):
     items = None
     connection = get_session()
     
@@ -32,14 +32,18 @@ def search_headlines_database(searchQuery):
                     SELECT *
                     FROM Headline
                     WHERE MATCH(headline) AGAINST ('{}' IN NATURAL LANGUAGE MODE)
-                    LIMIT 9;     
                   '''.format(searchQuery)
+            if startdate:
+                sql = sql + " AND DATE(date) > '{}'".format(startdate)
+            if enddate:
+                sql = sql + " AND DATE(date) < '{}'".format(enddate)
+            sql = sql + " LIMIT 27;"
             print(sql)
             cursor.execute(sql)
             items = cursor.fetchall()
     finally:
         print('Success!')
-
+    print(items)
     return items
 
 

@@ -29,20 +29,52 @@ class Bar extends React.Component {
     constructor(props){
         super(props);
         this.timeout =  0;
+        this.state = {
+            startdate: 'YYYY-MM-DD',
+            enddate: 'YYYY-MM-DD',
+            searchQuery: '',
+            show: false,
+            display: ''
+        }
     }
 
     searchText = (e) => {
         var searchQuery = e.target.value; 
-        if (searchQuery.length != 1) {
-            if (e.key === 'Enter') {
-                this.props.searchHeadlines({searchQuery});
-            } else {
-                if (this.timeout) clearTimeout(this.timeout);
-                this.timeout = setTimeout(() => {
-                  this.props.searchHeadlines({searchQuery})
-                }, 700);
-            }
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+            this.setState({searchQuery});
+            this.submitDate()
+        }, 700);
+    }
+
+    isValidDate(dateString) {
+        var regEx = /^\d{4}-\d{2}-\d{2}$/;
+        if(!dateString.match(regEx)) return false;  // Invalid format
+        var d = new Date(dateString);
+        var dNum = d.getTime();
+        if(!dNum && dNum !== 0) return false; // NaN value, Invalid date
+        return d.toISOString().slice(0,10) === dateString;
+    }
+
+    submitDate = () => {
+        this.setState({show: false});
+        let searchQuery = this.state.searchQuery;
+        let startdate = this.state.startdate;
+        let enddate = this.state.enddate;
+        let validStart = this.isValidDate(startdate)
+        let validEnd = this.isValidDate(enddate)
+        if (validStart && validEnd){
+            this.props.searchHeadlines({searchQuery, startdate, enddate});
+        } else if (validStart) {
+            this.props.searchHeadlines({searchQuery, startdate})
+        } else if (validEnd) {
+            this.props.searchHeadlines({searchQuery, enddate})
+        } else {
+            this.props.searchHeadlines({searchQuery});
+            this.setState({startdate: 'YYYY-MM-DD', enddate: 'YYYY-MM-DD'})
         }
+        this.setState({display: ''})
+        
     }
 
     render() {
@@ -56,27 +88,29 @@ class Bar extends React.Component {
                                 <Searchbar onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange = {this.searchText} type="text" placeholder="Search For Headlines.." />
                             </SearchbarWrapper>
                             <OverlayTrigger
-                                trigger="click"
+                                
+                                trigger = 'click'
                                 placement={'bottom'}
                                 overlay={
-                                <Popover id={`popover-positioned-bottom`}>
+                                <StyledPopover display = {this.state.display} id={`popover-positioned-bottom`}>
                                    
-                                    <Popover.Content>
+                                    <StyledPopoverContent>
                                         <Form>
                                             <Form.Group controlId="exampleForm.ControlInput1">
-                                                <Form.Label>Start Date</Form.Label>
-                                                <Form.Control placeholder="MM/DD/YYYY" />
+                                                <Form.Label >Start Date</Form.Label>
+                                                <Form.Control onChange ={(e) => {this.setState({startdate: e.target.value})}} placeholder={this.state.startdate} />
                                             </Form.Group>
                                             <Form.Group controlId="exampleForm.ControlInput1">
                                                 <Form.Label>End Date</Form.Label>
-                                                <Form.Control placeholder="MM/DD/YYYY" />
+                                                <Form.Control onChange ={(e) => {this.setState({enddate: e.target.value})}} placeholder={this.state.enddate} />
                                             </Form.Group>
+                                            <SubmitButton onClick = {this.submitDate} >Submit</SubmitButton>
                                         </Form>
-                                    </Popover.Content>
-                                </Popover>
+                                    </StyledPopoverContent>
+                                </StyledPopover>
                                 }
                             >
-                                <FilterButton>Filter</FilterButton>
+                                <FilterButton onClick = {() => this.setState({display: ''})} >Filter</FilterButton>
                             </OverlayTrigger>{' '}
                             
                         </FormWrap>
@@ -89,6 +123,10 @@ class Bar extends React.Component {
 
 
 export default connect(null, {searchHeadlines, retrieveHeadlines})(Bar);
+
+const StyledPopover = styled(Popover)`
+    display: ${props => props.display};
+`
 
 const StyledIcon = styled(FontAwesomeIcon)`
     font-size: 20px;
@@ -152,8 +190,31 @@ const FilterButton = styled(Button)`
     }
 `
 
+const SubmitButton = styled(Button)`
+    height: 50px !important;
+    width: 100px !important;
+    border: 0.5px solid #313896;
+    margin-left: 50px;
+    color: #313896;
+    background-color: white;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 5px 12px 20px rgba(36, 37, 38, 0.13);
+        background-color: #313896;
+        color: white
+        border: 0.5px solid #313896 !important;
+    }
+`
+
 const Brand = styled(Navbar.Brand)`
     margin-left: 30px;
     font-size: 30px !important;
     color: #313896 !important;
+`
+
+const StyledPopoverContent = styled(Popover.Content)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 `

@@ -47,13 +47,25 @@ class Headlines extends React.Component {
             </StyledJumbotron>
         }
         var cards = []
-        var icons = [economy_icon, micro_icon, poli_icon, train_icon, travel_icon, video_icon, world_icon]
-        for (let i = 0; i <= this.props.headlines.length - 3; i += 3){
+        var icons = [economy_icon, micro_icon, poli_icon, train_icon, travel_icon, video_icon, world_icon, poli_icon]
+        console.log(this.props.headlines.length)
+        if (this.props.headlines.length == 2) {
             cards.push(<CardWrapper>
-                <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i].id} item = {this.props.headlines[i]}/>
-                <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i + 1].id} item = {this.props.headlines[i + 1]}/>
-                <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i + 2].id} item = {this.props.headlines[i + 2]}/>
+                <HeadlineCard icon = {icons[this.rand(icons.length)]} key = {this.props.headlines[0].id} item = {this.props.headlines[0]}/>
+                <HeadlineCard icon = {icons[this.rand(icons.length)]} key = {this.props.headlines[1].id} item = {this.props.headlines[1]}/>
             </CardWrapper>);
+        } else if (this.props.headlines.length == 1) {
+            cards.push(<CardWrapper>
+                <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[0].id} item = {this.props.headlines[0]}/>
+            </CardWrapper>);
+        } else {
+            for (let i = 0; i <= this.props.headlines.length - 3; i += 3){
+                cards.push(<CardWrapper>
+                    <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i].id} item = {this.props.headlines[i]}/>
+                    <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i + 1].id} item = {this.props.headlines[i + 1]}/>
+                    <HeadlineCard icon = {icons[this.rand(icons.length - 1)]} key = {this.props.headlines[i + 2].id} item = {this.props.headlines[i + 2]}/>
+                </CardWrapper>);
+            }
         }
         return cards
     }
@@ -71,7 +83,7 @@ class Headlines extends React.Component {
 
 
 const mapStateToProps = (state) => {
-    console.log(state.headlines)
+    
     return {
         headlines: Object.values(state.headlines)
     }

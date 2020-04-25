@@ -11,9 +11,16 @@ def index():
 
 @app.route('/search_headlines', methods=["POST"])
 def search_headlines():
-	searchQuery = request.get_json()['searchQuery']
-	data = search_headlines_database(searchQuery)
-
+	body = request.get_json()
+	searchQuery = body['searchQuery']
+	startdate = None
+	enddate = None
+	if 'startdate' in body:
+		startdate = body['startdate']
+	if 'enddate' in body:
+		enddate = body['enddate']
+	data = search_headlines_database(searchQuery, startdate, enddate)
+	print('withinServer', data)
 	for item in data:
 		item['sentiment_score'] = float(item['sentiment_score'])
 	return {
@@ -27,6 +34,7 @@ def scan_headlines():
 
 	for item in data:
 		item['sentiment_score'] = float(item['sentiment_score'])
+	
 	return {
 		'data': data
 	}

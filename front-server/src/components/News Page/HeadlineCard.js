@@ -26,6 +26,9 @@ class HeadlineCard extends React.Component {
         let headline = this.props.item.headline
         let left = 30
         let bool = false
+        if (headline.substring(0, 1) === 'b'){
+            headline = headline.substring(1, headline.length)
+        }
         while (headline.length > 110){
             headline = headline.split(' ').slice(0,left).join(' ');
             left -= 10;
