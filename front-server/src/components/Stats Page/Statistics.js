@@ -21,7 +21,7 @@ class Statistics extends React.Component {
         super(props);
     }
     state = {
-        data: [12, 5, 6, 6, 9, 10],
+        data: [10, 7, 6, 2, 9, 18],
         width: 700,
         height: 500,
     }
