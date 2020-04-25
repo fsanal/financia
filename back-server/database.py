@@ -70,7 +70,7 @@ def get_headlines_for_event(event):
     try:
         with connection.cursor() as cursor:
             sql = f'''
-                    SELECT headline
+                    SELECT date, headline, sentiment_score
                     FROM Event_Association e JOIN Headline h
                     ON e.headline_id = h.id
                     WHERE event_id = {event}

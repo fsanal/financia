@@ -3,6 +3,7 @@ import { Dropdown } from 'react-bootstrap';
 import styled from "styled-components";
 import Card from 'react-bootstrap/Card';
 import axios from '../../apis/api';
+import HeadlineCard from './HeadlineCard';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 class Events extends React.Component {
@@ -10,7 +11,9 @@ class Events extends React.Component {
         super(props);
 
         this.state = {
-            'events': []
+            'events': [],
+            'headlines': [],
+            'current_event': ''
         };
 
         this.getEconomicEvents();
@@ -38,9 +41,21 @@ class Events extends React.Component {
 
     async getEvent(event) {
         const self = this;
+        this.setState({
+            'current_event': this.state.events[event-1].name
+        });
+
         axios.get('/event_headlines?event_id='+event)
         .then(function(response) {
-            console.log(response.data.data);
+            var headlines = [];
+            for (var i = 0; i < response.data.data.length; i++) {
+                const item = response.data.data[i];
+                headlines.push(item);
+            }
+            self.setState({
+                'headlines': headlines
+            });
+            self.forceUpdate();
         })
         .catch(function(error) {
             console.log(error);
@@ -49,6 +64,8 @@ class Events extends React.Component {
 
     render() {
         var event_items = [];
+        var headlines = [];
+        var sentiments = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             const id = event.id;
@@ -56,6 +73,16 @@ class Events extends React.Component {
             event_items.push(
                 <Dropdown.Item eventKey={id} key={id}>{name}</Dropdown.Item>
             );
+        }
+        for (var i = 0; i < this.state.headlines.length; i++) {
+            const item = this.state.headlines[i];
+            const headline = item.headline;
+            const date = item.date;
+            const sentiment = item.sentiment_score;
+            headlines.push(
+                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)}></HeadlineCard>
+            );
+            sentiments.push(sentiment);
         }
 
         return (
@@ -78,13 +105,28 @@ class Events extends React.Component {
                                             </Dropdown>
                                         </div>
                                     </div>
+
+                                    <br/>
+                                    <br/>
+
+                                    {this.state.current_event !== "" && 
+                                    <div className="row">
+                                        <div className="col">
+                                            <h3>Current Event: {this.state.current_event}</h3>
+                                            <h3>Average Sentiment: {(sentiments.reduce((a,b) => a + b, 0) / sentiments.length).toFixed(2)}</h3>
+                                        </div>
+                                    </div>}
                                 </StyledCard>
                             </CardWrapper>
                         </div>
                         <div className="col-6">
                             <CardWrapper>
                                 <StyledCard>
-
+                                    <div className="row">
+                                        <div className="col">
+                                            {headlines}
+                                        </div>
+                                    </div>
                                 </StyledCard>
                             </CardWrapper>
                         </div>
@@ -114,7 +156,7 @@ const StyledCard = styled(Card)`
     margin-left: 8vw;
     
     width: 30vw;
-    height: 75vh;
+    height: 100vh;
     box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
     border-radius: 16px !important;
     border: none;
