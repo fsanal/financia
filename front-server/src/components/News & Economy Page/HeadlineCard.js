@@ -15,11 +15,12 @@ class HeadlineCard extends React.Component {
     render() {
         return (
           <div>
-                <Card style={{ width: '18rem' }}>
+                <Card>
                     <Card.Body>
                         <Card.Title>{this.props.date}</Card.Title>
                         <Card.Text>
-                            {this.props.headline}
+                            <p>{this.props.headline}</p>
+                            <h5>Impact Score: </h5>
                         </Card.Text>
                     </Card.Body>
                 </Card>
