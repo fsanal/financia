@@ -24,60 +24,65 @@ import world_icon from '../../icons/world.png'
 import styled from "styled-components"
 
 
-const HeadlineDetail = () => {
-    return (
-        <>
-            <StyledJumbotron>
-                <StyledImg2 src = {world_icon} />
-                <Date>January 7, 2016</Date>
-                <Wrapper>
-                    <h2>A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898. </h2>
-                </Wrapper>
-                
-                <Wrapper>
-                    <Topic background_color = '#9c88ff'>Immigration</Topic>
-                    <Topic background_color = '#ff6348'>Death</Topic>
-                </Wrapper>
-                <Wrapper>
-                    <SentimentWrapper>
-                        <StyledIcon icon={faLaughBeam} />
-                        <Sentiment >Sentiment: 0.5</Sentiment>
-                    </SentimentWrapper>
-                </Wrapper>
-                <CardWrapper>
-                    <StyledCard border="success" style={{}}>
-                        <Card.Body>
-                            <StyledImg src = {economy_icon} alt = "Economy Icon"/>
-                            <StyledText>
-                                A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                and died a few hours later. 
-                            </StyledText>
-                        </Card.Body>              
-                    </StyledCard>
-                    <StyledCard border="success" style={{}}>
-                        <Card.Body>
-                            <StyledImg src = {train_icon} />
-                            <StyledText>
-                                A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                and died a few hours later.
-                            </StyledText>
-                        </Card.Body>       
-                    </StyledCard>
-                    <StyledCard border="success" style={{}}>
-                        <Card.Body>
-                            <StyledImg src = {economy_icon} />
-                            <StyledText>
-                                A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                and died a few hours later. 
-                            </StyledText>
-                        </Card.Body>
-                    </StyledCard>
-                </CardWrapper>
-            </StyledJumbotron>
-        </>
-    )
+class HeadlineDetail extends React.Component {
+
+    render(){
+        return (
+            <>
+                <JumbotronWrapper>
+                <StyledJumbotron>
+                    <StyledImg2 src = {world_icon} />
+                    <Date>January 7, 2016</Date>
+                    <Wrapper>
+                        <h2>A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
+                            she had been born in 1898. </h2>
+                    </Wrapper>
+                    
+                    <Wrapper>
+                        <Topic background_color = '#9c88ff'>Immigration</Topic>
+                        <Topic background_color = '#ff6348'>Death</Topic>
+                    </Wrapper>
+                    <Wrapper>
+                        <SentimentWrapper>
+                            <StyledIcon icon={faLaughBeam} />
+                            <Sentiment >Sentiment: 0.5</Sentiment>
+                        </SentimentWrapper>
+                    </Wrapper>
+                    <CardWrapper>
+                        <StyledCard border="success" style={{}}>
+                            <Card.Body>
+                                <StyledImg src = {economy_icon} alt = "Economy Icon"/>
+                                <StyledText>
+                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                    and died a few hours later. 
+                                </StyledText>
+                            </Card.Body>              
+                        </StyledCard>
+                        <StyledCard border="success" style={{}}>
+                            <Card.Body>
+                                <StyledImg src = {train_icon} />
+                                <StyledText>
+                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                    and died a few hours later.
+                                </StyledText>
+                            </Card.Body>       
+                        </StyledCard>
+                        <StyledCard border="success" style={{}}>
+                            <Card.Body>
+                                <StyledImg src = {economy_icon} />
+                                <StyledText>
+                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                    and died a few hours later. 
+                                </StyledText>
+                            </Card.Body>
+                        </StyledCard>
+                    </CardWrapper>
+                </StyledJumbotron>
+                </JumbotronWrapper>
+            </>
+        )
+    }  
 }
 
 /*<StyledIcon icon={faLaughBeam} />*/
@@ -126,6 +131,9 @@ const StyledImg2 = styled.img`
     margin-left: 43%;
 `
 
+const JumbotronWrapper = styled.div`
+    padding-top: 150px;
+`
 
 
 const StyledJumbotron = styled(Jumbotron)`
@@ -133,7 +141,6 @@ const StyledJumbotron = styled(Jumbotron)`
     width: 1200px;
     margin-left: auto;
     margin-right: auto;
-    margin-top: 20px;
     background-color: white !important;
     box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
 `

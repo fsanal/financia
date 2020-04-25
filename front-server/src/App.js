@@ -12,7 +12,7 @@ const App = () => {
                 <Router history = {history}>
                   <Route path = "/" component = {Navbar} />
                   <Route path = "/headlines" component = {Headlines}/>
-                  <Route path = "/detail" component = {HeadlineDetail}/>
+                  <Route path = "/detail/:id" component = {HeadlineDetail}/>
                   <Route path = "/example" component = {Headline}/>
                 </Router> 
             </>)
