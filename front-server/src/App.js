@@ -8,6 +8,8 @@ import HeadlineDetail from './components/News Page/HeadlineDetail';
 import Navbar from './components/Navbar';
 import Events from './components/News & Economy Page/Events';
 
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 const App = () => {
     return (<>
                 <Router history = {history}>
