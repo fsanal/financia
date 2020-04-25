@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
-from database import scan_headline
+from database import scan_headline, search_headlines_database
 
 app = Flask(__name__)
 CORS(app)
@@ -9,18 +9,24 @@ CORS(app)
 def index():
 	return 'Hello World!'
 
-@app.route('/scan_headline')
+@app.route('/search_headlines', methods=["POST"])
+def search_headlines():
+	searchQuery = request.get_json()['searchQuery']
+	data = search_headlines_database(searchQuery)
+
+	for item in data:
+		item['sentiment_score'] = float(item['sentiment_score'])
+	return {
+		'data': data
+	}
+
+@app.route('/scan_headline', methods=["POST"])
 def scan_headlines():
-	items = scan_headline()
-	data = []
+	
+	data = scan_headline()
 
-	for item in items:
-		id = item[0]
-		headline = item[1]
-		date = item[2]
-		sentiment_score = float(item[3])
-		data.append([id, headline, date, sentiment_score])
-
+	for item in data:
+		item['sentiment_score'] = float(item['sentiment_score'])
 	return {
 		'data': data
 	}

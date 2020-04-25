@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 
-export default combineReducers({
+import headlineReducer from './Headline_Reducer'
 
+export default combineReducers({
+    headlines: headlineReducer
 });

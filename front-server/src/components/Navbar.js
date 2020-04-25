@@ -11,32 +11,53 @@ import FormControl from 'react-bootstrap/FormControl';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch} from '@fortawesome/free-solid-svg-icons'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
 //styles
 import styled from "styled-components"
 
+//actions
+import { searchHeadlines } from '../actions/Headline_Actions'
 
-const Bar = () => {
-    return (
-        <>
-            <StyledNavbar bg="light" expand="lg">
-                <Brand href="/headlines">FINANCIA</Brand>
-                
-                    <FormWrap inline>
-                        <SearchbarWrapper>
-                            <StyledIcon icon={faSearch} />
-                            <Searchbar type="text" placeholder="Search For Headlines.." />
-                        </SearchbarWrapper>
-                        <FilterButton variant="outline-info">Filter</FilterButton>
-                    </FormWrap>
-                
-            </StyledNavbar>
-        </>
-    )
+//misc
+import { connect } from 'react-redux';
+
+class Bar extends React.Component {
+
+    constructor(props){
+        super(props);
+        this.timeout =  0;
+    }
+
+    searchText = (e) => {
+        var searchQuery = e.target.value; 
+        if (this.timeout) clearTimeout(this.timeout);
+        this.timeout = setTimeout(() => {
+          this.props.searchHeadlines({searchQuery})
+        }, 300);
+    }
+
+    render() {
+        return (
+            <>
+                <StyledNavbar bg="light" expand="lg">
+                    <Brand href="/headlines">FINANCIA</Brand>
+                        <FormWrap inline>
+                            <SearchbarWrapper>
+                                <StyledIcon icon={faSearch} />
+                                <Searchbar onChange = {this.searchText} type="text" placeholder="Search For Headlines.." />
+                            </SearchbarWrapper>
+                            <FilterButton variant="outline-info">Filter</FilterButton>
+                        </FormWrap>
+                    
+                </StyledNavbar>
+            </>
+        )
+    }
 }
 
-export default Bar
+
+export default connect(null, {searchHeadlines})(Bar);
 
 const StyledIcon = styled(FontAwesomeIcon)`
     font-size: 20px;
@@ -49,6 +70,10 @@ const StyledNavbar = styled(Navbar)`
     border-bottom: 1px solid #ebebeb;
     margin-bottom: 30px;
     width: 100%;
+    position: fixed;
+    top: 0;
+    overflow: hidden;
+    z-index: 1;
 `
 
 const FormWrap = styled(Form)`

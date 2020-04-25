@@ -7,10 +7,11 @@ import styled from "styled-components"
 //components
 import Card from 'react-bootstrap/Card';
 
+//icons 
+
 class Headline extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             'headlines': []
         };
@@ -23,10 +24,13 @@ class Headline extends React.Component {
 
         axios.get('/scan_headline')
             .then(function(response) {
+                console.log(response.data.data)
+                /*
                 self.setState({
                     'headlines': response.data.data
                 });
                 self.forceUpdate();
+                */
             })
             .catch(function(error) {
                 console.log(error);
@@ -53,9 +57,12 @@ class Headline extends React.Component {
         }
 
         return (
-            <Background>
-                {cards}
-            </Background>
+            <>
+                <Background>
+                    {cards}
+                </Background>
+            </>
+            
         );
     }
 }

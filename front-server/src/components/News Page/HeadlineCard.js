@@ -5,6 +5,7 @@ import styled from "styled-components"
 
 //components
 import Card from 'react-bootstrap/Card';
+import { Link } from 'react-router-dom';
 
 //icons
 import economy_icon from '../../icons/economy.png';
@@ -16,99 +17,40 @@ import video_icon from '../../icons/video.png'
 import world_icon from '../../icons/world.png'
 
 
-const HeadlineCard = () => {
-    return (
-        <Background>
-            <CardWrapper>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {economy_icon} alt = "Economy Icon"/>
+class HeadlineCard extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    renderHeadline(){
+        let headline = this.props.item.headline
+        let left = 30
+        let bool = false
+        while (headline.length > 130){
+            headline = headline.split(' ').slice(0,left).join(' ');
+            left -= 10;
+            bool = true
+        }
+        if (bool) {
+            headline = headline + '...'
+        }
+        return headline
+    }
+
+    render(){
+        return (
+            <StyledLink to={`/detail/${this.props.item.id}`}>
+                <StyledCard>
+                    <StyledBody>
+                        <StyledImg src = {this.props.icon} />
                         <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. 
+                            {this.renderHeadline()}
                         </StyledText>
-                    </Card.Body>              
+                    </StyledBody>
                 </StyledCard>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {train_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later.
-                        </StyledText>
-                    </Card.Body>       
-                </StyledCard>
-            
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <StyledImg src = {economy_icon} />
-                    <StyledText>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. 
-                    </StyledText>
-                </Card.Body>
-            </StyledCard>
-            </CardWrapper>
-            <CardWrapper>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {poli_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later.
-                        </StyledText>
-                    </Card.Body>
-                </StyledCard>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {travel_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. 
-                        </StyledText>
-                    </Card.Body>
-                </StyledCard>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {video_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. 
-                        </StyledText>
-                    </Card.Body>
-                </StyledCard>
-            </CardWrapper>
-            <CardWrapper>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {economy_icon} alt = "Economy Icon"/>
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. 
-                        </StyledText>
-                    </Card.Body>              
-                </StyledCard>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {train_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later.
-                        </StyledText>
-                    </Card.Body>       
-                </StyledCard>
-                <StyledCard border="success" style={{}}>
-                    <Card.Body>
-                        <StyledImg src = {economy_icon} />
-                        <StyledText>
-                            A 117-year-old woman in Mexico City finally received her birth certificate, 
-                            and died a few hours later. 
-                        </StyledText>
-                    </Card.Body>
-                </StyledCard>
-            </CardWrapper>
-        </Background>
-    )
+            </StyledLink>
+        )
+    }
 
 }
 
@@ -123,21 +65,11 @@ const HeadlineCard = () => {
 export default HeadlineCard
 
 
-const Background = styled.div`
-    width: 100%;
-    height: 100%;
-`
 
-const CardWrapper = styled.div`
-    display: flex;
-    margin-left: auto;
-    margin-right: auto;
-    width: 1200px;
-`
 const StyledCard = styled(Card)`
+    
     margin-bottom: 30px;
-    margin-left: auto;
-    margin-right: auto;
+    
     width: 300px;
     height: 300px;
     box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
@@ -152,12 +84,29 @@ const StyledCard = styled(Card)`
 `
 
 const StyledText = styled(Card.Text)`
-    margin-top: 30px;
-    margin-left: 12px;
+    margin-top: 40px;
+    padding-left: 15px;
+
+    color: #202124;
 `
 
 const StyledImg = styled.img`
     width: 100px;
     height: 100px;
-    margin-left: 81px;
+    margin-top: 20px;
 `
+
+const StyledBody = styled(Card.Body)`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
+
+const StyledLink = styled(Link)`
+    text-decoration: none;
+    margin-left: auto;
+    margin-right: auto;
+    &:focus, &:hover, &:visited, &:link, &:active {
+        text-decoration: none;
+    }
+`;
