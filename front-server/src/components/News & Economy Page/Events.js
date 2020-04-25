@@ -135,8 +135,8 @@ class Events extends React.Component {
                                     {this.state.current_event !== "" && 
                                     <div className="row">
                                         <div className="col">
-                                            <h3>Current Event: {this.state.current_event}</h3>
-                                            <h3>Average Sentiment: {(sentiments.reduce((a,b) => a + b, 0) / sentiments.length).toFixed(2)}</h3>
+                                            <h3>Current Event: {this.state.current_event}</h3><br/>
+                                            <h3>Average Sentiment: {(sentiments.reduce((a,b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br/>
                                             <h3>Keywords:</h3>
                                             <ul>
                                                 {keywords}
