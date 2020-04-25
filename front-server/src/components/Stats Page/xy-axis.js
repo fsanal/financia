@@ -1,5 +1,5 @@
 import React from 'react';
-import Axis from './axis';
+import Axis from './Axis';
 
 const XYAxis = ({ xScale, yScale, height }) => {
   const xSettings = {

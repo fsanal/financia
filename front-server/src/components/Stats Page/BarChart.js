@@ -38,7 +38,7 @@ class BarChart extends Component {
         .attr("y", (d, i) => this.props.height - 10 * d)
         .attr("width", 65)
         .attr("height", (d, i) => d * 10)
-        .attr("fill", "red")
+        .attr("fill", "green")
 
     svg.selectAll("text")
         .data(data)
