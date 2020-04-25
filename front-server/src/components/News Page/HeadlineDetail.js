@@ -36,6 +36,14 @@ class HeadlineDetail extends React.Component {
         this.props.retrieveHeadlines()
     }
 
+    renderHeadline(head) {
+        let headline = head.headline
+        if (headline.substring(0, 1) === 'b'){
+            headline = headline.substring(1, headline.length)
+        }
+        return headline
+    }
+
     render(){
         if (!this.props.headlines){
             return (
@@ -52,7 +60,7 @@ class HeadlineDetail extends React.Component {
                     <StyledImg2 src = {world_icon} />
                     <Date>{headline.date.split(' ').slice(0, 4).join(' ')}</Date>
                     <Wrapper>
-                        <h2>{headline.headline} </h2>
+                        <h2>{this.renderHeadline(headline)} </h2>
                     </Wrapper>
                     
                     <Wrapper>
