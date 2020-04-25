@@ -6,6 +6,7 @@ import Headlines from './components/News Page/Headlines'
 import Headline from './components/News Page/Headline'
 import HeadlineDetail from './components/News Page/HeadlineDetail';
 import Navbar from './components/Navbar';
+import Statistics from './components/Stats Page/Statistics'
 
 const App = () => {
     return (<>
@@ -14,6 +15,7 @@ const App = () => {
                   <Route path = "/headlines" component = {Headlines}/>
                   <Route path = "/detail/:id" component = {HeadlineDetail}/>
                   <Route path = "/example" component = {Headline}/>
+                  <Route path = "/stats" component = {Statistics}/> 
                 </Router> 
             </>)
 }
