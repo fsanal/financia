@@ -12,6 +12,8 @@ import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
+import Popover from 'react-bootstrap/Popover'
 
 //styles
 import styled from "styled-components"
@@ -53,7 +55,30 @@ class Bar extends React.Component {
                                 <StyledIcon icon={faSearch} />
                                 <Searchbar onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }} onChange = {this.searchText} type="text" placeholder="Search For Headlines.." />
                             </SearchbarWrapper>
-                            <FilterButton variant="outline-info">Filter</FilterButton>
+                            <OverlayTrigger
+                                trigger="click"
+                                placement={'bottom'}
+                                overlay={
+                                <Popover id={`popover-positioned-bottom`}>
+                                   
+                                    <Popover.Content>
+                                        <Form>
+                                            <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label>Start Date</Form.Label>
+                                                <Form.Control placeholder="MM/DD/YYYY" />
+                                            </Form.Group>
+                                            <Form.Group controlId="exampleForm.ControlInput1">
+                                                <Form.Label>End Date</Form.Label>
+                                                <Form.Control placeholder="MM/DD/YYYY" />
+                                            </Form.Group>
+                                        </Form>
+                                    </Popover.Content>
+                                </Popover>
+                                }
+                            >
+                                <FilterButton>Filter</FilterButton>
+                            </OverlayTrigger>{' '}
+                            
                         </FormWrap>
                     
                 </StyledNavbar>
@@ -117,6 +142,7 @@ const FilterButton = styled(Button)`
     border: 0.5px solid #313896;
     margin-left: 30px;
     color: #313896;
+    background-color: white;
     &:hover {
         cursor: pointer;
         box-shadow: 5px 12px 20px rgba(36, 37, 38, 0.13);
