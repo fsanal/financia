@@ -38,12 +38,16 @@ class Events extends React.Component {
         });
     }
 
+    async getEvent(event) {
+        console.log(event);
+    }
+
     render() {
         var event_items = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             event_items.push(
-                <Dropdown.Item href="#" key={i}>{event}</Dropdown.Item>
+                <Dropdown.Item eventKey={event} key={i}>{event}</Dropdown.Item>
             );
         }
 
@@ -56,7 +60,7 @@ class Events extends React.Component {
                                 <StyledCard>
                                     <div className="row">
                                         <div className="col">
-                                            <Dropdown>
+                                            <Dropdown onSelect={e => this.getEvent(e)}>
                                                 <Dropdown.Toggle variant="success" id="dropdown-basic">
                                                     Economic Event
                                                 </Dropdown.Toggle>
