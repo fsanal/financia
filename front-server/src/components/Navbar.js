@@ -10,6 +10,8 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import FormControl from 'react-bootstrap/FormControl';
 import Nav from 'react-bootstrap/Nav';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch} from '@fortawesome/free-solid-svg-icons'
 
 //styles
 import styled from "styled-components"
@@ -19,15 +21,16 @@ const Bar = () => {
     return (
         <>
             <StyledNavbar bg="light" expand="lg">
-                <Navbar.Brand href="#home">Financia</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    
+                <Brand href="/headlines">FINANCIA</Brand>
+                
                     <FormWrap inline>
-                        <Searchbar type="text" placeholder="Search For Headlines.." />
+                        <SearchbarWrapper>
+                            <StyledIcon icon={faSearch} />
+                            <Searchbar type="text" placeholder="Search For Headlines.." />
+                        </SearchbarWrapper>
                         <FilterButton variant="outline-info">Filter</FilterButton>
                     </FormWrap>
-                </Navbar.Collapse>
+                
             </StyledNavbar>
         </>
     )
@@ -35,23 +38,65 @@ const Bar = () => {
 
 export default Bar
 
+const StyledIcon = styled(FontAwesomeIcon)`
+    font-size: 20px;
+    color: #313896;
+`
+
 const StyledNavbar = styled(Navbar)`
-    height: 80px !important;
+    height: 100px !important;
     background-color: white !important;
+    border-bottom: 1px solid #ebebeb;
+    margin-bottom: 30px;
+    width: 100%;
 `
 
 const FormWrap = styled(Form)`
-    width:1200px;
-    margin-left: 135px;
+    width:1400px;
+    margin-left: 120px;
 `
+
+const SearchbarWrapper = styled.div`
+    border-bottom: 2px solid #313896;
+    display: flex;
+    align-items: center;
+`
+
 const Searchbar = styled(FormControl)`
-    margin-right: 20px;
     align-self: center;
-    width: 600px !important;
+    width: 700px !important;
     height: 50px !important;
+    border: none !important;
+    font-size: 18px;
+    margin-left: 10px;
+    color: #313896 !important;
+    &:focus {
+        outline: none !important;
+        outline-offset: none !important;
+    }
+    &::placeholder {
+        color: #313896 !important;
+        opacity: 0.6;
+    }
 `
 
 const FilterButton = styled(Button)`
     height: 50px !important;
     width: 100px !important;
+    border: 0.5px solid #313896;
+    margin-left: 30px;
+    color: #313896;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 5px 12px 20px rgba(36, 37, 38, 0.13);
+        background-color: #313896;
+        color: white
+        border: 0.5px solid #313896 !important;
+    }
+`
+
+const Brand = styled(Navbar.Brand)`
+    margin-left: 30px;
+    font-size: 30px !important;
+    color: #313896 !important;
 `

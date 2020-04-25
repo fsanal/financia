@@ -10,7 +10,16 @@ import Card from 'react-bootstrap/Card'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLaughBeam } from '@fortawesome/free-solid-svg-icons'
 import { TagCloud } from 'react-tagcloud'
- 
+
+//icons
+import economy_icon from '../../icons/economy.png';
+import micro_icon from '../../icons/microscope.png'
+import poli_icon from '../../icons/politics.png'
+import train_icon from '../../icons/training.png'
+import travel_icon from '../../icons/travel.png'
+import video_icon from '../../icons/video.png'
+import world_icon from '../../icons/world.png'
+
 //styles
 import styled from "styled-components"
 
@@ -19,57 +28,50 @@ const HeadlineDetail = () => {
     return (
         <>
             <StyledJumbotron>
-                <StyledIcon icon={faLaughBeam} />
+                <StyledImg2 src = {world_icon} />
+                <Date>January 7, 2016</Date>
                 <Wrapper>
-                    <h1>A 117-year-old woman in Mexico City finally received her birth certificate, 
+                    <h2>A 117-year-old woman in Mexico City finally received her birth certificate, 
                         and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898. </h1>
+                        she had been born in 1898. </h2>
                 </Wrapper>
-                <Date>2016-07-01</Date>
+                
                 <Wrapper>
                     <Topic background_color = '#9c88ff'>Immigration</Topic>
                     <Topic background_color = '#ff6348'>Death</Topic>
                 </Wrapper>
+                <Wrapper>
+                    <SentimentWrapper>
+                        <StyledIcon icon={faLaughBeam} />
+                        <Sentiment >Sentiment: 0.5</Sentiment>
+                    </SentimentWrapper>
+                </Wrapper>
                 <CardWrapper>
-                    <StyledCard >
+                    <StyledCard border="success" style={{}}>
                         <Card.Body>
-                            <Sentiment>Sentiment: 0.85</Sentiment>
+                            <StyledImg src = {economy_icon} alt = "Economy Icon"/>
                             <StyledText>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
+                                A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                and died a few hours later. 
                             </StyledText>
-                            
-                        </Card.Body>
+                        </Card.Body>              
                     </StyledCard>
-                    <StyledCard >
+                    <StyledCard border="success" style={{}}>
                         <Card.Body>
-                            <Card.Title>Sentiment: 0.35</Card.Title>
+                            <StyledImg src = {train_icon} />
                             <StyledText>
-                            A woman in Mexico City finally received her birth certificate,
+                                A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                and died a few hours later.
                             </StyledText>
-                            
-                        </Card.Body>
+                        </Card.Body>       
                     </StyledCard>
-                    <StyledCard >
+                    <StyledCard border="success" style={{}}>
                         <Card.Body>
-                            <Card.Title>Sentiment: 0.25</Card.Title>
-                            
+                            <StyledImg src = {economy_icon} />
                             <StyledText>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
+                                A 117-year-old woman in Mexico City finally received her birth certificate, 
+                                and died a few hours later. 
                             </StyledText>
-                            
-                        </Card.Body>
-                    </StyledCard>
-                    <StyledCard >
-                        <Card.Body>
-                            <Card.Title>Sentiment: 0.75</Card.Title>
-                            
-                            <StyledText>
-                            Some quick example text to build on the card title and make up the bulk of
-                            the card's content.
-                            </StyledText>
-                            
                         </Card.Body>
                     </StyledCard>
                 </CardWrapper>
@@ -78,57 +80,95 @@ const HeadlineDetail = () => {
     )
 }
 
+/*<StyledIcon icon={faLaughBeam} />*/
 export default HeadlineDetail
 
+
+const CardWrapper = styled.div`
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+    
+`
+const StyledCard = styled(Card)`
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
+    border-radius: 16px !important;
+    border: none;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    &:hover {
+        cursor: pointer;
+        box-shadow: 5px 12px 20px rgba(36, 37, 38, 0.13);
+    }
+    font-family: 'Roboto', sans-serif;
+    border: 1px solid rgba(36, 37, 38, 0.08) !important;
+`
+
+const StyledText = styled(Card.Text)`
+    margin-top: 30px;
+    margin-left: 12px;
+`
+
+const StyledImg = styled.img`
+    width: 100px;
+    height: 100px;
+    margin-left: 81px;
+`
+
+const StyledImg2 = styled.img`
+    width: 150px;
+    height: 150px;
+    margin-left: 43%;
+`
 
 
 
 const StyledJumbotron = styled(Jumbotron)`
+
     width: 1200px;
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
     background-color: white !important;
-`
-
-const StyledCard = styled(Card)`
-    display: inline-block !important;
-    margin-right: 36px;
-    width: 15rem !important;
-    height: 17rem !important;
-`
-
-const StyledText = styled(Card.Text)`
-    height: 5rem !important;
+    box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
 `
 
 const StyledIcon = styled(FontAwesomeIcon)`
     color: #2ecc71;
-    font-size: 100px;
-    margin-left: 45%;
-    margin-right:
+    font-size: 80px;
+    display: inline;
 `
 
 const Date = styled.h3`
-    margin-top: 30px;
-    margin-left: 43%;
+    margin-top: 40px;
+    margin-left: 30px;
 `
 
 const Wrapper = styled.div`
-    margin-top: 30px;
+    margin-top: 40px;
     margin-left: 30px;
     margin-right: auto;
 `
 
-const CardWrapper = styled.div`
-    margin-top: 30px;
-    margin-left: 30px;
-    margin-right: auto;
-    display:flex;
+const SentimentWrapper = styled.div`
+    display: flex;
+    align-items: center;
 `
 
-const Sentiment = styled(Card.Title)`
-    color: #2ecc71 !important;
+
+
+
+
+const Sentiment = styled.div`
+    display:inline;
+    font-size: 30px;
+    margin-left: 20px;
+    color: ${props => props.color} !important;
 `
 
 

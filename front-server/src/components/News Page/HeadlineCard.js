@@ -6,59 +6,107 @@ import styled from "styled-components"
 //components
 import Card from 'react-bootstrap/Card';
 
+//icons
+import economy_icon from '../../icons/economy.png';
+import micro_icon from '../../icons/microscope.png'
+import poli_icon from '../../icons/politics.png'
+import train_icon from '../../icons/training.png'
+import travel_icon from '../../icons/travel.png'
+import video_icon from '../../icons/video.png'
+import world_icon from '../../icons/world.png'
+
+
 const HeadlineCard = () => {
     return (
         <Background>
+            <CardWrapper>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {economy_icon} alt = "Economy Icon"/>
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. 
+                        </StyledText>
+                    </Card.Body>              
+                </StyledCard>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {train_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later.
+                        </StyledText>
+                    </Card.Body>       
+                </StyledCard>
+            
             <StyledCard border="success" style={{}}>
                 <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
+                    <StyledImg src = {economy_icon} />
+                    <StyledText>
                         A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>              
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>       
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
+                        and died a few hours later. 
+                    </StyledText>
                 </Card.Body>
             </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>
-            </StyledCard>
+            </CardWrapper>
+            <CardWrapper>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {poli_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later.
+                        </StyledText>
+                    </Card.Body>
+                </StyledCard>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {travel_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. 
+                        </StyledText>
+                    </Card.Body>
+                </StyledCard>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {video_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. 
+                        </StyledText>
+                    </Card.Body>
+                </StyledCard>
+            </CardWrapper>
+            <CardWrapper>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {economy_icon} alt = "Economy Icon"/>
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. 
+                        </StyledText>
+                    </Card.Body>              
+                </StyledCard>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {train_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later.
+                        </StyledText>
+                    </Card.Body>       
+                </StyledCard>
+                <StyledCard border="success" style={{}}>
+                    <Card.Body>
+                        <StyledImg src = {economy_icon} />
+                        <StyledText>
+                            A 117-year-old woman in Mexico City finally received her birth certificate, 
+                            and died a few hours later. 
+                        </StyledText>
+                    </Card.Body>
+                </StyledCard>
+            </CardWrapper>
         </Background>
     )
 
@@ -79,22 +127,37 @@ const Background = styled.div`
     width: 100%;
     height: 100%;
 `
-const StyledCard = styled(Card)`
-    margin-top: 30px;
+
+const CardWrapper = styled.div`
+    display: flex;
     margin-left: auto;
     margin-right: auto;
     width: 1200px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.11), 
-    0 2px 2px rgba(0,0,0,0.11), 
-    0 4px 4px rgba(0,0,0,0.11), 
-    0 6px 8px rgba(0,0,0,0.11),
-    0 8px 16px rgba(0,0,0,0.11);
-    border-radius: 5px !important;
-    border: 0px solid #9F32B2 !important;
-    transition: top ease 1s;
+`
+const StyledCard = styled(Card)`
+    margin-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    height: 300px;
+    box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
+    border-radius: 16px !important;
+    border: none;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
     &:hover {
         cursor: pointer;
-       
-        top: -5px;
+        box-shadow: 5px 12px 20px rgba(36, 37, 38, 0.13);
     }
+    font-family: 'Roboto', sans-serif;
+`
+
+const StyledText = styled(Card.Text)`
+    margin-top: 30px;
+    margin-left: 12px;
+`
+
+const StyledImg = styled.img`
+    width: 100px;
+    height: 100px;
+    margin-left: 81px;
 `
