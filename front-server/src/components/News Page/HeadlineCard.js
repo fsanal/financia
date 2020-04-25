@@ -6,7 +6,7 @@ import styled from "styled-components"
 //components
 import Card from 'react-bootstrap/Card';
 
-const Headline = () => {
+const HeadlineCard = () => {
     return (
         <Background>
             <StyledCard border="success" style={{}}>
@@ -72,7 +72,7 @@ const Headline = () => {
 
 */
 
-export default Headline
+export default HeadlineCard
 
 
 const Background = styled.div`
@@ -91,4 +91,10 @@ const StyledCard = styled(Card)`
     0 8px 16px rgba(0,0,0,0.11);
     border-radius: 5px !important;
     border: 0px solid #9F32B2 !important;
+    transition: top ease 1s;
+    &:hover {
+        cursor: pointer;
+       
+        top: -5px;
+    }
 `
