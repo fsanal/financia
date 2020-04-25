@@ -20,29 +20,26 @@ class Statistics extends React.Component {
     constructor(props) {
         super(props);
     }
-    componentDidMount() {
-        const data = [ 2, 4, 2, 6, 8 ]
-        this.drawBarChart(data)
-    }
-    drawBarChart(data) {
-        const canvasHeight = 400
-        const canvasWidth = 600
-        const scale = 20
-        const svgCanvas = d3.select(this.refs.canvas)
-            .append("svg")
-            .attr("width", canvasWidth)
-            .attr("heigh", canvasHeight)
-            .style("border", "1px solid black")
-        svgCanvas.selectAll("rect")
-            .data(data).enter()
-                .append("rect")
-                .attr("width", 40)
-                .attr("height", (datapoint) => datapoint * scale)
-                .attr("fill", "orange")
-                .attr("x", (datapoint, iteration) => iteration * 45)
-                .attr("y", (datapoint) => canvasHeight - datapoint * scale)
-        }
-    render() { return <div ref="canvas"></div> }
+
+    state = {
+        data: [12, 5, 6, 6, 9, 10],
+        width: 700,
+        height: 500,
+      }
+
+    render() {
+        return (
+            <html>
+                <body>
+                <h1>This is a heading</h1>
+                <p>This is a paragraph.</p>
+                </body>
+                <div className="Statistics">
+                    <BarChart data={this.state.data} width={this.state.width} height={this.state.height} />
+                </div>
+            </html>
+        );
+      }
 }
 
 export default Statistics
