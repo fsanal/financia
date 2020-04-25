@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from '../../apis/api';
 
 //styles
 import styled from "styled-components"
@@ -6,62 +7,56 @@ import styled from "styled-components"
 //components
 import Card from 'react-bootstrap/Card';
 
-const Headline = () => {
-    return (
-        <Background>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>              
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>       
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>
-            </StyledCard>
-            <StyledCard border="success" style={{}}>
-                <Card.Body>
-                    <Card.Title>2016-07-01</Card.Title>    
-                    <Card.Text>
-                        A 117-year-old woman in Mexico City finally received her birth certificate, 
-                        and died a few hours later. Trinidad Alvarez Lira had waited years for proof that 
-                        she had been born in 1898.
-                    </Card.Text>
-                </Card.Body>
-            </StyledCard>
-        </Background>
-    )
+class Headline extends React.Component {
+    constructor(props) {
+        super(props);
 
+        this.state = {
+            'headlines': []
+        };
+
+        this.getHeadlines();
+    }
+
+    async getHeadlines() {
+        const self = this;
+
+        axios.get('/scan_headline')
+            .then(function(response) {
+                self.setState({
+                    'headlines': response.data.data
+                });
+                self.forceUpdate();
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+    }
+
+    render() {
+        var cards = [];
+        if (this.state.headlines.length >= 10) {
+            for (var i = 0; i < 10; i++) {
+                const headline = this.state.headlines[i];
+                cards.push(
+                    <StyledCard border="success" style={{}}>
+                        <Card.Body>
+                            <Card.Title>{headline[2]}</Card.Title>
+                            <Card.Text>
+                                {headline[1]}
+                            </Card.Text>
+                        </Card.Body>
+                    </StyledCard>
+                );
+            }
+        }
+
+        return (
+            <Background>
+                {cards}
+            </Background>
+        );
+    }
 }
 
 /*
