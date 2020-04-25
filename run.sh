@@ -1,6 +1,8 @@
 #!/bin/bash
 trap 'kill $BGPID; exit' INT
-cd back-server
+cd cors-anywhere
+npm start &
+cd ../back-server
 python3 server.py &
 BGPID=$!
 cd ../front-server
