@@ -13,7 +13,8 @@ class Events extends React.Component {
         this.state = {
             'events': [],
             'headlines': [],
-            'current_event': ''
+            'current_event': '',
+            'keywords': []
         };
 
         this.getEconomicEvents();
@@ -60,12 +61,28 @@ class Events extends React.Component {
         .catch(function(error) {
             console.log(error);
         });
+
+        this.getKeywords(event);
+    }
+
+    async getKeywords(id) {
+        const self = this;
+        axios.get('/keywords?event_id='+id)
+            .then(function(response) {
+                self.setState({
+                    'keywords': response.data.data
+                });
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
     }
 
     render() {
         var event_items = [];
         var headlines = [];
         var sentiments = [];
+        var keywords = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             const id = event.id;
@@ -83,6 +100,12 @@ class Events extends React.Component {
                 <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)}></HeadlineCard>
             );
             sentiments.push(sentiment);
+        }
+        for (var i = 0; i < this.state.keywords.length; i++) {
+            const item = this.state.keywords[i]
+            keywords.push(
+                <li key={i}>{item}</li>
+            );
         }
 
         return (
@@ -114,6 +137,10 @@ class Events extends React.Component {
                                         <div className="col">
                                             <h3>Current Event: {this.state.current_event}</h3>
                                             <h3>Average Sentiment: {(sentiments.reduce((a,b) => a + b, 0) / sentiments.length).toFixed(2)}</h3>
+                                            <h3>Keywords:</h3>
+                                            <ul>
+                                                {keywords}
+                                            </ul>
                                         </div>
                                     </div>}
                                 </StyledCard>
