@@ -134,6 +134,7 @@ const StyledIcon = styled(FontAwesomeIcon)`
 `
 
 const StyledNavbar = styled(Navbar)`
+    box-shadow: 0 2px 4px rgba(3,27,78,.1);
     height: 100px !important;
     background-color: white !important;
     border-bottom: 1px solid #ebebeb;
