@@ -82,7 +82,43 @@ def get_headlines_for_event(event):
     
     return items
 
+def highest_turnout():
+    items = None
+    connection = get_session()
 
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
 
+            '''
+        cursor.execute(sql)
+        items = cursor.fetchall
+    finally: 
+        print('Yay1!')
+
+    return items
+
+def highest_close():
+    items = None
+    connection = get_session()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                SELECT h.date, AVG(sentiment_score) as sentiment_score
+                FROM  Intraday_Turnout It JOIN Headline h on It.date = h.date
+                WHERE h.date IN 
+                (SELECT date FROM 
+                (SELECT date, MAX(close) 
+                FROM Intraday_Turnout temp 
+                GROUP BY Month(temp.date), Year(temp.date)) t) 
+                GROUP BY h.date; 
+            ''' 
+        cursor.execute(sql) 
+        items = cursor.fetchall 
+    finally: 
+        print('Success!') 
+ 
+    return items 
 
 
