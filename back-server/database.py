@@ -126,3 +126,28 @@ def create_associations(event_id, headline_ids):
                 connection.commit()
         finally:
             print('Success!')
+
+
+def get_impactful_events(sentiment_threshold):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                        SELECT COUNT(*) as number, Month(h.date) as month, Year(h.date) as year
+                        FROM Headline h
+                        WHERE h.sentiment_score > {sentiment_threshold}
+                        GROUP BY Month(h.date), Year(h.date)
+                    )
+                    SELECT DISTINCT temp.month, temp.year, number, ev.name as name
+                    FROM temp JOIN Headline h ON Month(h.date) = temp.month AND Year(h.date) = temp.year JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id 
+                    WHERE temp.Number = (SELECT MAX(Number) FROM temp);
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items

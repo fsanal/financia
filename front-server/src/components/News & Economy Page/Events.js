@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Form, Button, Table } from 'react-bootstrap';
 import styled from "styled-components";
 import Card from 'react-bootstrap/Card';
 import axios from '../../apis/api';
@@ -14,7 +14,8 @@ class Events extends React.Component {
             'events': [],
             'headlines': [],
             'current_event': '',
-            'keywords': []
+            'keywords': [],
+            'impactful_events': []
         };
 
         this.getEconomicEvents();
@@ -101,11 +102,26 @@ class Events extends React.Component {
         });
     }
 
+    async getImpactfulEvents(threshold) {
+        const self = this;
+        axios.get('/impactful_events?threshold=' + threshold)
+            .then(function (response) {
+                const events = response.data.data;
+                self.setState({
+                    'impactful_events': events
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
     render() {
         var event_items = [];
         var headlines = [];
         var sentiments = [];
         var scores = [];
+        var events_table = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             const id = event.id;
@@ -130,6 +146,24 @@ class Events extends React.Component {
                 <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} sentiment={sentiment} keywords={this.state.keywords[i]} impact_score={score}></HeadlineCard>
             );
             sentiments.push(sentiment);
+        }
+        for (var i = 0; i < this.state.impactful_events.length; i++) {
+            const item = this.state.impactful_events[i];
+            const event_name = item.name;
+            const event_year = item.year;
+            events_table.push(
+                <tr key={i}>
+                    <td>{event_name}</td>
+                    <td>{event_year}</td>
+                </tr>
+            );
+        }
+
+        const submitForm = (event) => {
+            event.preventDefault();
+            const form = event.currentTarget;
+            const threshold = form.elements.threshold.value;
+            this.getImpactfulEvents(threshold);
         }
 
         return (
@@ -156,10 +190,39 @@ class Events extends React.Component {
                                     <br />
                                     <br />
 
+                                    <div className="row">
+                                        <div className="col" style={{ margin: '20px' }}>
+                                            <h3>Most Impactful Events</h3>
+                                            <Form onSubmit={submitForm}>
+                                                <Form.Group controlId="threshold">
+                                                    <Form.Control type="text" placeholder="Enter Sentiment Threshold (eg. 0.5)" />
+                                                </Form.Group>
+                                                <Button type="submit">Submit</Button>
+                                            </Form> <br />
+                                            {this.state.impactful_events.length != 0 &&
+                                                <Table striped bordered hover>
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Event</th>
+                                                            <th>Year</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {events_table}
+                                                    </tbody>
+                                                </Table>
+                                            }
+                                        </div>
+                                    </div>
+
+                                    <br />
+                                    <br />
+
                                     {this.state.current_event !== "" &&
                                         <div className="row">
-                                            <div className="col">
-                                                <h3>Current Event: {this.state.current_event}</h3><br />
+                                            <div className="col" style={{ margin: '20px' }}>
+                                                <h3>Current Event:</h3>
+                                                <p>{this.state.current_event}</p>
                                                 <h3>Average Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br />
                                             </div>
                                         </div>}

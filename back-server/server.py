@@ -1,6 +1,12 @@
 from flask import Flask, request
 from flask_cors import CORS
-from database import scan_headline, search_headlines_database, scan_events, get_headlines_for_event
+from database import (
+    scan_headline,
+    search_headlines_database,
+    scan_events,
+    get_headlines_for_event,
+    get_impactful_events
+)
 from rake_nltk import Rake
 from textblob import TextBlob
 
@@ -93,6 +99,16 @@ def keyword_text():
 
     return {
         'data': blob.noun_phrases
+    }
+
+
+@app.route('/impactful_events')
+def impactful_events():
+    threshold = request.args.get('threshold')
+    data = get_impactful_events(threshold)
+
+    return {
+        'data': data
     }
 
 
