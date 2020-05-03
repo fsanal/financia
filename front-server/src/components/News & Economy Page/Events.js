@@ -116,7 +116,7 @@ class Events extends React.Component {
             const sentiment = item.sentiment_score;
             const count = this.count(headline, this.state.current_event);
             headlines.push(
-                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} impact_score={Math.abs((count * sentiment).toFixed(2))} sentiment={sentiment} keywords={keywords[i]}></HeadlineCard>
+                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} impact_score={Math.abs((count * sentiment).toFixed(2))} sentiment={sentiment} keywords={this.state.keywords[i]}></HeadlineCard>
             );
             sentiments.push(sentiment);
         }
