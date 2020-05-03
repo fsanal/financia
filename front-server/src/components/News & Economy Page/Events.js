@@ -33,7 +33,7 @@ class Events extends React.Component {
                 self.setState({
                     'events': events
                 });
-                self.forceUpdate();
+                // self.forceUpdate();
             })
             .catch(function (error) {
                 console.log(error);
@@ -56,7 +56,7 @@ class Events extends React.Component {
                 self.setState({
                     'headlines': headlines
                 });
-                self.forceUpdate();
+                // self.forceUpdate();
             })
             .catch(function (error) {
                 console.log(error);
@@ -90,11 +90,22 @@ class Events extends React.Component {
         return (sentence.match(new RegExp(word, 'gi')) || []).length;
     }
 
+    getImpactScore() {
+        var score = 0;
+        for (var i = 0; i < this.props.keywords.length; i++) {
+            const keyword = this.props.keywords[i];
+            score += this.count(this.props.headline, keyword);
+        }
+        this.setState({
+            score: score
+        });
+    }
+
     render() {
         var event_items = [];
         var headlines = [];
         var sentiments = [];
-        var keywords = [];
+        var scores = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             const id = event.id;
@@ -103,20 +114,20 @@ class Events extends React.Component {
                 <Dropdown.Item eventKey={id} key={i}>{name}</Dropdown.Item>
             );
         }
-        for (var i = 0; i < this.state.keywords.length; i++) {
-            const item = this.state.keywords[i]
-            keywords.push(
-                <li key={i}>{item}</li>
-            );
-        }
         for (var i = 0; i < this.state.headlines.length; i++) {
             const item = this.state.headlines[i];
             const headline = item.headline;
             const date = item.date;
             const sentiment = item.sentiment_score;
-            const count = this.count(headline, this.state.current_event);
+            var score = 0;
+            if (this.state.keywords[i]) {
+                for (var j = 0; j < this.state.keywords[i].length; j++) {
+                    const word = this.state.keywords[i][j];
+                    score += this.count(headline, word);
+                }
+            }
             headlines.push(
-                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} impact_score={Math.abs((count * sentiment).toFixed(2))} sentiment={sentiment} keywords={this.state.keywords[i]}></HeadlineCard>
+                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} sentiment={sentiment} keywords={this.state.keywords[i]} impact_score={score}></HeadlineCard>
             );
             sentiments.push(sentiment);
         }
@@ -150,10 +161,6 @@ class Events extends React.Component {
                                             <div className="col">
                                                 <h3>Current Event: {this.state.current_event}</h3><br />
                                                 <h3>Average Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br />
-                                                {/* <h3>Keywords:</h3>
-                                                <ul>
-                                                    {keywords}
-                                                </ul> */}
                                             </div>
                                         </div>}
                                 </StyledCard>

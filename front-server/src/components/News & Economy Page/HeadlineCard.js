@@ -57,6 +57,13 @@ class HeadlineCard extends React.Component {
     }
 
     render() {
+        if (this.props.keywords) {
+            var keywords = [];
+            for (var i = 0; i < this.props.keywords.length; i++) {
+                keywords.push(<li key={i}>{this.props.keywords[i]}</li>)
+            }
+        }
+
         return (
             <div>
                 <Card>
@@ -64,9 +71,9 @@ class HeadlineCard extends React.Component {
                         <Card.Title>{this.props.date}</Card.Title>
                         <Card.Text>
                             <h6>{this.props.headline}</h6>
-                            <h5>Keywords: {this.state.keywords}</h5>
+                            <h5>Keywords: {keywords}</h5>
                             <h5>Sentiment: {this.props.sentiment}</h5>
-                            <h5>Impact Score: {this.state.score}</h5>
+                            <h5>Impact Score: {this.props.impact_score}</h5>
                         </Card.Text>
                     </Card.Body>
                 </Card>
