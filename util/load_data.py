@@ -1,7 +1,9 @@
 import pymysql
 from textblob import TextBlob
 
-connection = pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com', port=3306, user='admin', password='BoombaZombie', db='data')
+connection = pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com',
+                             port=3306, user='admin', password='BoombaZombie', db='data')
+
 
 def put_dji():
     count = len(open('^DJI.csv', 'r').readlines()) - 1
@@ -35,6 +37,7 @@ def put_dji():
         line = f.readline()
 
     f.close()
+
 
 def put_gspc():
     count = len(open('^GSPC.csv', 'r').readlines()) - 1
@@ -101,6 +104,7 @@ def put_ixic():
 
     f.close()
 
+
 def put_rut():
     count = len(open('^RUT.csv', 'r').readlines()) - 1
     f = open('^RUT.csv', 'r')
@@ -134,6 +138,7 @@ def put_rut():
 
     f.close()
 
+
 def put_news():
     count = len(open('RedditNews.csv', 'r').readlines()) - 1
     f = open('RedditNews.csv', 'r')
@@ -159,11 +164,11 @@ def put_news():
         finally:
             print(f'{i}/{count}')
             i += 1
- 
+
         line = f.readline()
 
-
     f.close()
+
 
 def get_events():
     items = None
@@ -179,6 +184,7 @@ def get_events():
         print('Success!')
 
     return items
+
 
 def get_headlines(keyword):
     items = None
@@ -196,6 +202,7 @@ def get_headlines(keyword):
 
     return items
 
+
 def put_event_association(event_id, headline_id):
     try:
         with connection.cursor() as cursor:
@@ -207,6 +214,7 @@ def put_event_association(event_id, headline_id):
             connection.commit()
     finally:
         print('Success!')
+
 
 def find_associations():
     events = get_events()
@@ -221,6 +229,7 @@ def find_associations():
             put_event_association(id, headline[0])
             print(f'{i}/{len(headlines)}')
             i += 1
+
 
 def compute_sentiments():
     items = None
@@ -240,7 +249,8 @@ def compute_sentiments():
     tuples = ''
     i = 1
     for row in items:
-        sentiment = TextBlob(row[1]).sentiment.polarity
+        sentiment = 0
+        sentiment = TextBlob(str(row[1])).sentiment.polarity
         headline = row[1]
         headline = headline.replace('"', '')
         headline = headline.replace("'", '')
