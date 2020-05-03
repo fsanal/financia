@@ -2,7 +2,7 @@ import {
     RETRIEVE_HEADLINES,
     SEARCH_HEADLINES
 } from './types'
-
+ 
 import api from '../apis/api';
 
 
