@@ -5,7 +5,8 @@ from database import (
     search_headlines_database,
     scan_events,
     get_headlines_for_event,
-    get_impactful_events
+    get_impactful_events,
+    get_events_min_volumes
 )
 from rake_nltk import Rake
 from textblob import TextBlob
@@ -106,6 +107,15 @@ def keyword_text():
 def impactful_events():
     threshold = request.args.get('threshold')
     data = get_impactful_events(threshold)
+
+    return {
+        'data': data
+    }
+
+
+@app.route('/min_volumes')
+def min_volumes():
+    data = get_events_min_volumes()
 
     return {
         'data': data

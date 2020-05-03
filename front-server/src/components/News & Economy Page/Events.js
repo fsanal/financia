@@ -15,10 +15,25 @@ class Events extends React.Component {
             'headlines': [],
             'current_event': '',
             'keywords': [],
-            'impactful_events': []
+            'impactful_events': [],
+            'min_volumes': []
         };
 
         this.getEconomicEvents();
+        this.getMinVolumes();
+    }
+
+    async getMinVolumes() {
+        const self = this;
+        axios.get('/min_volumes')
+            .then(function (response) {
+                self.setState({
+                    'min_volumes': response.data.data
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     async getEconomicEvents() {
@@ -122,6 +137,7 @@ class Events extends React.Component {
         var sentiments = [];
         var scores = [];
         var events_table = [];
+        var volume_table = [];
         for (var i = 0; i < this.state.events.length; i++) {
             const event = this.state.events[i];
             const id = event.id;
@@ -155,6 +171,17 @@ class Events extends React.Component {
                 <tr key={i}>
                     <td>{event_name}</td>
                     <td>{event_year}</td>
+                </tr>
+            );
+        }
+        for (var i = 0; i < this.state.min_volumes.length; i++) {
+            const item = this.state.min_volumes[i];
+            const event_name = item.name;
+            const vol = item.min_volume;
+            volume_table.push(
+                <tr key={i}>
+                    <td>{event_name}</td>
+                    <td>{vol}</td>
                 </tr>
             );
         }
@@ -228,6 +255,27 @@ class Events extends React.Component {
                                         </div>}
                                 </StyledCard>
                             </CardWrapper>
+
+                            <div className="row">
+                                <CardWrapper>
+                                    <StyledCard>
+                                        <div className="col" style={{ margin: '20px' }} >
+                                            <h3>Minimum Intraday Volume During Economic Events</h3>
+                                            <Table striped bordered hover>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Event</th>
+                                                        <th>Minimum Intraday Volume</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {volume_table}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    </StyledCard>
+                                </CardWrapper>
+                            </div>
 
                             {this.state.current_event !== '' &&
                                 <div className="row">

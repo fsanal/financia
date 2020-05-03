@@ -151,3 +151,22 @@ def get_impactful_events(sentiment_threshold):
         print('Success!')
 
     return items
+
+
+def get_events_min_volumes():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT ev.name as name, MIN(Volume) as min_volume
+                    FROM Headline h JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id JOIN Intraday_Turnout It ON h.date = It.date
+                    GROUP BY ev.name;
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
