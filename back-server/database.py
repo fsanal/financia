@@ -1,12 +1,14 @@
 import pymysql
 
+
 def get_session():
     return pymysql.connect(host='cis450.czwf6yzxfpm1.us-east-1.rds.amazonaws.com', port=3306, user='admin', password='BoombaZombie', db='data', cursorclass=pymysql.cursors.DictCursor)
+
 
 def scan_headline():
     items = None
     connection = get_session()
-    
+
     try:
         with connection.cursor() as cursor:
             sql = '''
@@ -19,13 +21,14 @@ def scan_headline():
             items = cursor.fetchall()
     finally:
         print('Success!')
-    
+
     return items
+
 
 def search_headlines_database(searchQuery, startdate, enddate):
     items = None
     connection = get_session()
-    
+
     try:
         with connection.cursor() as cursor:
             sql = '''
@@ -46,10 +49,11 @@ def search_headlines_database(searchQuery, startdate, enddate):
     print(items)
     return items
 
+
 def scan_events():
     items = None
     connection = get_session()
-    
+
     try:
         with connection.cursor() as cursor:
             sql = f'''
@@ -60,13 +64,14 @@ def scan_events():
             items = cursor.fetchall()
     finally:
         print('Success!')
-    
+
     return items
+
 
 def get_headlines_for_event(event):
     items = None
     connection = get_session()
-    
+
     try:
         with connection.cursor() as cursor:
             sql = f'''
@@ -79,10 +84,89 @@ def get_headlines_for_event(event):
             items = cursor.fetchall()
     finally:
         print('Success!')
-    
+
     return items
 
 
+def get_ids_with_term_year(term, year):
+    items = None
+    connection = get_session()
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT id
+                    FROM Headline
+                    WHERE headline LIKE "%{term}%"
+                    AND YEAR(date) = "{year}"
+                  '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    ids = []
+    for item in items:
+        ids.append(item['id'])
+
+    return ids
 
 
+def create_associations(event_id, headline_ids):
+    connection = get_session()
 
+    for headline_id in headline_ids:
+        try:
+            with connection.cursor() as cursor:
+                sql = f'''
+                        INSERT INTO Event_Association (event_id, headline_id)
+                        VALUES ("{event_id}", "{headline_id}")
+                      '''
+                cursor.execute(sql)
+                connection.commit()
+        finally:
+            print('Success!')
+
+
+def get_impactful_events(sentiment_threshold):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                        SELECT COUNT(*) as number, Month(h.date) as month, Year(h.date) as year
+                        FROM Headline h
+                        WHERE h.sentiment_score > {sentiment_threshold}
+                        GROUP BY Month(h.date), Year(h.date)
+                    )
+                    SELECT DISTINCT temp.month, temp.year, number, ev.name as name
+                    FROM temp JOIN Headline h ON Month(h.date) = temp.month AND Year(h.date) = temp.year JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id 
+                    WHERE temp.Number = (SELECT MAX(Number) FROM temp);
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
+def get_events_min_volumes():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT ev.name as name, MIN(Volume) as min_volume
+                    FROM Headline h JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id JOIN Intraday_Turnout It ON h.date = It.date
+                    GROUP BY ev.name;
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items

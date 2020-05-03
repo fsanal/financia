@@ -1,5 +1,6 @@
 import nltk
 nltk.download('stopwords')
+nltk.download('brown')
 
 # import nltk
 # import ssl

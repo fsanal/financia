@@ -8,23 +8,76 @@ class HeadlineCard extends React.Component {
         super(props);
 
         this.state = {
-
+            keywords: [],
+            score: 0
         };
     }
 
+    componentWillMount() {
+        if (this.props.keywords) {
+            this.getKeywords();
+            this.getImpactScore();
+        }
+    }
+
+    getKeywords() {
+        var keywords = [];
+        for (var i = 0; i < this.props.keywords.length; i++) {
+            const item = this.props.keywords[i]
+            keywords.push(
+                <li key={i}>{item}</li>
+            );
+        }
+        this.setState({
+            keywords: keywords
+        });
+    }
+
+    count(sentence, word) {
+        sentence += '';
+        word += '';
+
+        if (word.length <= 0) {
+            return sentence.length + 1;
+        }
+
+        word = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return (sentence.match(new RegExp(word, 'gi')) || []).length;
+    }
+
+    getImpactScore() {
+        var score = 0;
+        for (var i = 0; i < this.props.keywords.length; i++) {
+            const keyword = this.props.keywords[i];
+            score += this.count(this.props.headline, keyword);
+        }
+        this.setState({
+            score: score
+        });
+    }
+
     render() {
+        if (this.props.keywords) {
+            var keywords = [];
+            for (var i = 0; i < this.props.keywords.length; i++) {
+                keywords.push(<li key={i}>{this.props.keywords[i]}</li>)
+            }
+        }
+
         return (
-          <div>
+            <div>
                 <Card>
                     <Card.Body>
                         <Card.Title>{this.props.date}</Card.Title>
                         <Card.Text>
-                            <p>{this.props.headline}</p>
+                            <h6>{this.props.headline}</h6>
+                            <h5>Keywords: {keywords}</h5>
+                            <h5>Sentiment: {this.props.sentiment}</h5>
                             <h5>Impact Score: {this.props.impact_score}</h5>
                         </Card.Text>
                     </Card.Body>
                 </Card>
-          </div>  
+            </div>
         );
     }
 }
