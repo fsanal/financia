@@ -14,17 +14,19 @@ class HeadlineCard extends React.Component {
 
     render() {
         return (
-          <div>
+            <div>
                 <Card>
                     <Card.Body>
                         <Card.Title>{this.props.date}</Card.Title>
                         <Card.Text>
                             <p>{this.props.headline}</p>
+                            <h5>Keywords: {this.props.keywords}</h5>
+                            <h5>Sentiment: {this.props.sentiment}</h5>
                             <h5>Impact Score: {this.props.impact_score}</h5>
                         </Card.Text>
                     </Card.Body>
                 </Card>
-          </div>  
+            </div>
         );
     }
 }
