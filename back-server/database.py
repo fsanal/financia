@@ -179,9 +179,63 @@ def get_closings_dji():
     try: 
         with connection.cursor() as cursor:
             sql = f'''
-                    SELECT date, close
+                    SELECT date AS x, close AS y
                     FROM Intraday_Turnout
                     WHERE index_symbol = 'DJI'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_closings_gspc():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'GSPC'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_closings_ixic():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'IXIC'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_closings_rut():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'RUT'
                    '''
             cursor.execute(sql)
             items = cursor.fetchall()

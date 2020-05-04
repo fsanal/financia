@@ -11,6 +11,9 @@ import { AreaClosed } from '@vx/shape';
 import { Group } from '@vx/group';
 import { AxisLeft, AxisBottom } from '@vx/axis';
 import { highest_close } from "../../actions/Statistics_Actions"
+import ReactApexChart from 'react-apexcharts'
+import ApexCharts from 'apexcharts'
+
 
 //misc
 import { connect } from 'react-redux';
@@ -21,48 +24,140 @@ import { withRouter } from 'react-router';
 import styled from "styled-components"
 import axios from '../../apis/api';
 
-var data = appleStock;
-
-const width = 750;
-const height = 400;
-const margin = {
-  top: 60,
-  bottom: 60,
-  left: 80,
-  right: 80,
-};
-const xMax = width - margin.left - margin.right;
-const yMax = height - margin.top - margin.bottom;
-const x = d => new Date(d.date); // d.date is unix timestamps
-const y = d => d.close;
-data.map(y); // Gives an array of all the y values
-const xScale = scaleTime({
-  range: [0, xMax],
-  domain: extent(data, x)
-});
-const yScale = scaleLinear({
-  range: [yMax, 0],
-  domain: [0, max(data, y)],
-});
+var data
 class Statistics extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      dji_closings:[]
+      
+      series1: [],
+
+      options1: {
+        chart: {
+          type: 'line',
+          stacked: false,
+          height: 350,
+          background: '#fff',
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        legend: {
+          horizontalAlign: 'right',
+        },
+        dataLabels: {
+          enabled: false,
+          show: true
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Stock Price Movement',
+          align: 'left'
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return val
+            }
+          }
+        }
+      }
     }
-    this.get_dji_closings()
+    this.get_closings()
  
   }
 
-  async get_dji_closings(){
+  async get_closings(){
     const self = this;
         axios.get('/dji_closings')
             .then(function (response) {
-                self.setState({
-                    'dji_closings': response.data.data
-                });
-                console.log(response.data.data)
+              let item = {
+                name: "DJI",
+                data: response.data.data
+              }
+              var target = []
+              Object.assign(target, self.state.series1)
+              target.push(item)
+              self.setState({
+                series1:target
+              })
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        axios.get('/gspc_closings')
+            .then(function (response) {
+              let item = {
+                name: "GSPC",
+                data: response.data.data
+              }
+              var target = []
+              Object.assign(target, self.state.series1)
+              target.push(item)
+              console.log(target)
+              self.setState({
+                series1:target
+              })
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+        axios.get('/ixic_closings')
+            .then(function (response) {
+              let item = {
+                name: "IXIC",
+                data: response.data.data
+              }
+              var target = []
+              Object.assign(target, self.state.series1)
+              target.push(item)
+              console.log(target)
+              self.setState({
+                series1:target
+              })
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+      axios.get('/rut_closings')
+            .then(function (response) {
+              let item = {
+                name: "RUT",
+                data: response.data.data
+              }
+              var target = []
+              Object.assign(target, self.state.series1)
+              target.push(item)
+              console.log(target)
+              self.setState({
+                series1:target
+              })
+                
             })
             .catch(function (error) {
                 console.log(error);
@@ -75,39 +170,13 @@ class Statistics extends React.Component {
   }
 
   render() {
-    data = this.state.dji_closings
-    console.log("reached!")
     return(
         <Background>
             <div className = "container">
-                <svg width={width} height={height}>
-                  <rect x={0} y={0} width={width} height={height} fill="#FFFFFF"/>
-                    <Group top={margin.top} left={margin.left}>
-                      <AreaClosed
-                        data={data}
-                        x={d => xScale(x(d))}
-                        y={d => yScale(y(d))}
-                        yScale={yScale}
-                        fill={"red"}
-                      />
-                      <AxisLeft
-                        scale={yScale}
-                        top={0}
-                        left={0}
-                        label={'Close Price ($)'}
-                        stroke={'#1b1a1e'}
-                        tickTextFill={'#1b1a1e'}
-                      />
-
-                      <AxisBottom
-                        scale={xScale}
-                        top={yMax}
-                        label={'Years'}
-                        stroke={'#1b1a1e'}
-                        tickTextFill={'#1b1a1e'}
-                      />
-                    </Group>
-                </svg>
+              <div>
+                <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" height={350} />
+              </div>
+    
             </div>
         </Background>
     )
@@ -121,12 +190,6 @@ const Background = styled.div`
     width: 100%;
 `
 
-const mapStateToProps = (state) => {
-    
-  return {
-      headlines: Object.values(state.headlines)
-  }
-}
 
-export default connect(mapStateToProps, {highest_close})(Statistics);
+export default (Statistics);
 

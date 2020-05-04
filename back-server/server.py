@@ -8,6 +8,9 @@ from database import (
     get_impactful_events,
     get_events_min_volumes,
     get_closings_dji,
+    get_closings_gspc,
+    get_closings_ixic,
+    get_closings_rut,
     get_daily_change_dji,
     get_volume_dji
 )
@@ -138,13 +141,45 @@ def min_volumes():
 def dji_closings():
     data = get_closings_dji()
     for item in data:
-        item['close'] = float(item['close'])
+        item['y'] = float(item['y'])
 
     res = {
         'data': data
     }
     return jsonify(res)
 
+@app.route('/ixic_closings')
+def ixic_closings():
+    data = get_closings_ixic()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/gspc_closings')
+def gspc_closings():
+    data = get_closings_gspc()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/rut_closings')
+def rut_closings():
+    data = get_closings_rut()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
 
 @app.route('/dji_daily_change')
 def dji_daily_change():
