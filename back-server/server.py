@@ -124,13 +124,17 @@ def min_volumes():
         'data': data
     }
 
+
 @app.route('/dji_closings')
 def dji_closings():
     data = get_closings_dji()
+    for item in data:
+        item['close'] = float(item['close'])
 
     return {
         'data': data
     }
+
 
 @app.route('/dji_daily_change')
 def dji_daily_change():
@@ -140,6 +144,7 @@ def dji_daily_change():
         'data': data
     }
 
+
 @app.route('/dji_volume')
 def dji_volume():
     data = get_volume_dji()
@@ -147,6 +152,7 @@ def dji_volume():
     return {
         'data': data
     }
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
