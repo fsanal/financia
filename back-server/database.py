@@ -170,3 +170,58 @@ def get_events_min_volumes():
         print('Success!')
 
     return items
+
+
+def get_closings_dji():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date, close
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'DJI'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_daily_change_dji():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date, high - low as diff
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'DJI'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_volume_dji():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT volume
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'DJI'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items

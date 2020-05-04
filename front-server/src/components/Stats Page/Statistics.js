@@ -21,7 +21,7 @@ import { withRouter } from 'react-router';
 import styled from "styled-components"
 import axios from '../../apis/api';
 
-const data = appleStock;
+var data = appleStock;
 
 const width = 750;
 const height = 400;
@@ -47,15 +47,36 @@ const yScale = scaleLinear({
 class Statistics extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      dji_closings:[]
+    }
+    this.get_dji_closings()
  
   }
+
+  async get_dji_closings(){
+    const self = this;
+        axios.get('/dji_closings')
+            .then(function (response) {
+                self.setState({
+                    'dji_closings': response.data.data
+                });
+                console.log(response.data.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+  }
+
+  
   
   componentDidMount() {
-    this.props.highest_close()
   }
 
   render() {
-    
+    data = this.state.dji_closings
+    console.log("reached!")
     return(
         <Background>
             <div className = "container">

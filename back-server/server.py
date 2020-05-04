@@ -6,9 +6,12 @@ from database import (
     scan_events,
     get_headlines_for_event,
     get_impactful_events,
-    get_events_min_volumes
+    get_events_min_volumes,
+    get_closings_dji,
+    get_daily_change_dji,
+    get_volume_dji
 )
-from rake_nltk import Rake
+#from rake_nltk import Rake
 from textblob import TextBlob
 
 app = Flask(__name__)
@@ -121,6 +124,29 @@ def min_volumes():
         'data': data
     }
 
+@app.route('/dji_closings')
+def dji_closings():
+    data = get_closings_dji()
+
+    return {
+        'data': data
+    }
+
+@app.route('/dji_daily_change')
+def dji_daily_change():
+    data = get_daily_change_dji()
+
+    return {
+        'data': data
+    }
+
+@app.route('/dji_volume')
+def dji_volume():
+    data = get_volume_dji()
+
+    return {
+        'data': data
+    }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
