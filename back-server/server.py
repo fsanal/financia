@@ -9,7 +9,9 @@ from database import (
     get_events_min_volumes,
     get_closings_dji,
     get_daily_change_dji,
-    get_volume_dji
+    get_volume_dji,
+    get_pchange,
+    get_all_closings
 )
 #from rake_nltk import Rake
 from textblob import TextBlob
@@ -159,6 +161,34 @@ def dji_daily_change():
 @app.route('/dji_volume')
 def dji_volume():
     data = get_volume_dji()
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+
+@app.route('/p_change')
+def p_change():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    data = get_pchange(start_date, end_date)
+    for item in data:
+        item['p_change'] = float(item['p_change'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+
+@app.route('/all_closings')
+def all_closings():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    data = get_all_closings(start_date, end_date)
+    for item in data:
+        item['close'] = float(item['close'])
 
     res = {
         'data': data
