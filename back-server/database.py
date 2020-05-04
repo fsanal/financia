@@ -56,7 +56,7 @@ def scan_events():
 
     try:
         with connection.cursor() as cursor:
-            sql = f'''
+            sql = '''
                     SELECT *
                     FROM Economic_Event    
                   '''
@@ -74,12 +74,12 @@ def get_headlines_for_event(event):
 
     try:
         with connection.cursor() as cursor:
-            sql = f'''
+            sql = '''
                     SELECT date, headline, sentiment_score
                     FROM Event_Association e JOIN Headline h
                     ON e.headline_id = h.id
-                    WHERE event_id = {event}
-                  '''
+                    WHERE event_id = {}
+                  '''.format(event)
             cursor.execute(sql)
             items = cursor.fetchall()
     finally:
