@@ -20,18 +20,69 @@ import { withRouter } from 'react-router';
 import styled from "styled-components"
 import axios from '../../apis/api';
 
+<<<<<<< HEAD
+=======
+var data = appleStock;
+
+const width = 750;
+const height = 400;
+const margin = {
+  top: 60,
+  bottom: 60,
+  left: 80,
+  right: 80,
+};
+const xMax = width - margin.left - margin.right;
+const yMax = height - margin.top - margin.bottom;
+const x = d => new Date(d.date); // d.date is unix timestamps
+const y = d => d.close;
+data.map(y); // Gives an array of all the y values
+const xScale = scaleTime({
+  range: [0, xMax],
+  domain: extent(data, x)
+});
+const yScale = scaleLinear({
+  range: [yMax, 0],
+  domain: [0, max(data, y)],
+});
+>>>>>>> 08b649dad68f500d9ae63501c749973511adc129
 class Statistics extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      dji_closings:[]
+    }
+    this.get_dji_closings()
  
   }
+
+  async get_dji_closings(){
+    const self = this;
+        axios.get('/dji_closings')
+            .then(function (response) {
+                self.setState({
+                    'dji_closings': response.data.data
+                });
+                console.log(response.data.data)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+  }
+
+  
   
   componentDidMount() {
+<<<<<<< HEAD
     //this.props.highest_close()
+=======
+>>>>>>> 08b649dad68f500d9ae63501c749973511adc129
   }
 
   render() {
-    
+    data = this.state.dji_closings
+    console.log("reached!")
     return(
       <ApexChart/>
     )

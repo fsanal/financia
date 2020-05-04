@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database import (
     scan_headline,
@@ -6,9 +6,12 @@ from database import (
     scan_events,
     get_headlines_for_event,
     get_impactful_events,
-    get_events_min_volumes
+    get_events_min_volumes,
+    get_closings_dji,
+    get_daily_change_dji,
+    get_volume_dji
 )
-from rake_nltk import Rake
+#from rake_nltk import Rake
 from textblob import TextBlob
 
 app = Flask(__name__)
@@ -34,9 +37,11 @@ def search_headlines():
     print('withinServer', data)
     for item in data:
         item['sentiment_score'] = float(item['sentiment_score'])
-    return {
+
+    res = {
         'data': data
     }
+    return jsonify(res)
 
 
 @app.route('/scan_headline', methods=["POST"])
@@ -47,18 +52,20 @@ def scan_headlines():
     for item in data:
         item['sentiment_score'] = float(item['sentiment_score'])
 
-    return {
+    res = {
         'data': data
     }
+    return jsonify(res)
 
 
 @app.route('/scan_event')
 def scan_event():
     data = scan_events()
 
-    return {
+    res = {
         'data': data
     }
+    return jsonify(res)
 
 
 @app.route('/event_headlines')
@@ -69,9 +76,10 @@ def event_headlines():
     for item in data:
         item['sentiment_score'] = float(item['sentiment_score'])
 
-    return {
+    res = {
         'data': data
     }
+    return jsonify(res)
 
 
 @app.route('/keywords')
@@ -88,9 +96,10 @@ def keywords():
         blob = TextBlob(headline)
         keywords.append(blob.noun_phrases)
 
-    return {
+    res = {
         'data': keywords
     }
+    return jsonify(res)
 
 
 @app.route('/keyword_text')
@@ -98,9 +107,10 @@ def keyword_text():
     text = request.args.get('text')
     blob = TextBlob(text)
 
-    return {
+    res = {
         'data': blob.noun_phrases
     }
+    return jsonify(res)
 
 
 @app.route('/impactful_events')
@@ -108,18 +118,52 @@ def impactful_events():
     threshold = request.args.get('threshold')
     data = get_impactful_events(threshold)
 
-    return {
+    res = {
         'data': data
     }
+    return jsonify(res)
 
 
 @app.route('/min_volumes')
 def min_volumes():
     data = get_events_min_volumes()
 
-    return {
+    res = {
         'data': data
     }
+    return jsonify(res)
+
+
+@app.route('/dji_closings')
+def dji_closings():
+    data = get_closings_dji()
+    for item in data:
+        item['close'] = float(item['close'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+
+@app.route('/dji_daily_change')
+def dji_daily_change():
+    data = get_daily_change_dji()
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+
+@app.route('/dji_volume')
+def dji_volume():
+    data = get_volume_dji()
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
 
 
 if __name__ == '__main__':
