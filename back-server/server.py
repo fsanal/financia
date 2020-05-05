@@ -79,6 +79,7 @@ def scan_event():
 @app.route('/event_headlines')
 def event_headlines():
     event_id = request.args.get('event_id')
+    print(event_id)
     data = get_headlines_for_event(event_id)
 
     for item in data:

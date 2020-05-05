@@ -7,9 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { appleStock } from '@vx/mock-data';
 import { scaleTime, scaleLinear } from '@vx/scale';
 import {extent, max} from 'd3-array';
-import { AreaClosed } from '@vx/shape';
-import { Group } from '@vx/group';
-import { AxisLeft, AxisBottom } from '@vx/axis';
 import { highest_close } from "../../actions/Statistics_Actions"
 import ReactApexChart from 'react-apexcharts'
 import ApexCharts from 'apexcharts'
@@ -17,6 +14,8 @@ import { Dropdown, Form, Button, Table } from 'react-bootstrap';
 import Card from 'react-bootstrap/Card';
 
 
+
+import ApexChart from './ApexChart';
 
 //misc
 import { connect } from 'react-redux';
@@ -224,6 +223,7 @@ class Statistics extends React.Component {
   
   
   componentDidMount() {
+    //this.props.highest_close()
   }
 
   render() {
@@ -273,6 +273,13 @@ class Statistics extends React.Component {
       );
     }
     return(
+      <ApexChart/>
+    )
+  }
+  
+}
+/*
+
         <Background>
             <div className = "container">
               <div className="row">
@@ -364,11 +371,7 @@ class Statistics extends React.Component {
     
             </div>
         </Background>
-    )
-  }
-  
-}
-
+*/
 const Background = styled.div`
     padding-top: 150px;
     height: 100%;

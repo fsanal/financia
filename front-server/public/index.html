@@ -2,6 +2,21 @@
 <html lang="en">
   <head>
     <style>
+      .background-enter {
+        transform: translate(100%);
+      }
+      .background-enter.background-enter-active {
+        transform: translate(0%);
+        transition: transform 1000ms ease-in-out;
+      }
+      .background-leave {
+        transform: translate(0%);
+      }
+      .background-leave.background-leave-active {
+        transform: translate(-100%);
+        transition: transform 1000ms ease-in-out;
+      }
+      /*
       body {
         background-color: #f6f6f6;
         width: 100%;
@@ -38,6 +53,11 @@
         background-size: cover;
         
       }
+      .form-control:focus {
+        border-color: none !important;
+        box-shadow: none !important;
+      } 
+      */
       .form-control:focus {
         border-color: none !important;
         box-shadow: none !important;

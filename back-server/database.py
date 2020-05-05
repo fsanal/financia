@@ -56,7 +56,7 @@ def scan_events():
 
     try:
         with connection.cursor() as cursor:
-            sql = f'''
+            sql = '''
                     SELECT *
                     FROM Economic_Event    
                   '''
@@ -71,18 +71,18 @@ def scan_events():
 def get_headlines_for_event(event):
     items = None
     connection = get_session()
-
+    print(event)
     try:
         with connection.cursor() as cursor:
-            sql = f'''
+            sql = '''
                     SELECT date, headline, sentiment_score
                     FROM Event_Association e JOIN Headline h
                     ON e.headline_id = h.id
-                    WHERE event_id = {event}
-                  '''
+                    WHERE event_id = {}
+                  '''.format(event)
             cursor.execute(sql)
             items = cursor.fetchall()
-    finally:
+    finally: 
         print('Success!')
 
     return items
@@ -130,8 +130,7 @@ def create_associations(event_id, headline_ids):
 
 def get_impactful_events(sentiment_threshold):
     connection = get_session()
-    items = None
-
+    print(sentiment_threshold)
     try:
         with connection.cursor() as cursor:
             sql = f'''
@@ -141,13 +140,15 @@ def get_impactful_events(sentiment_threshold):
                         WHERE h.sentiment_score > {sentiment_threshold}
                         GROUP BY Month(h.date), Year(h.date)
                     )
-                    SELECT DISTINCT temp.month, temp.year, number, ev.name as name
+                    SELECT DISTINCT temp.month, temp.year, number, ev.name as name, ev.id as id
                     FROM temp JOIN Headline h ON Month(h.date) = temp.month AND Year(h.date) = temp.year JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id 
-                    WHERE temp.Number = (SELECT MAX(Number) FROM temp);
+                    WHERE temp.number = (SELECT MAX(number) FROM temp);
                    '''
             cursor.execute(sql)
             items = cursor.fetchall()
+            
     finally:
+        print(len(items))
         print('Success!')
 
     return items
