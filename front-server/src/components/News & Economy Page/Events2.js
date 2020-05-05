@@ -261,20 +261,22 @@ class Events extends React.Component {
                     headlines.push(item);
                     dates.push(new Date(item.date));
                 }
+                console.log("ENTERED HERE")
                 self.setState({
                     'headlines': headlines,
                     'waiting': false
                 });
-                self.setState({waiting: false})
+
+                console.log("After setState")
                 const maxDate = self.formatDate(new Date(Math.max.apply(null, dates)));
                 const minDate = self.formatDate(new Date(Math.min.apply(null, dates)));
-                self.getPchange(minDate, maxDate);
-                self.getClosingPrices(minDate, maxDate);
+                //self.getPchange(minDate, maxDate);
+                //self.getClosingPrices(minDate, maxDate);
             })
             .catch(function (error) {
                 console.log(error);
             });
-
+        
         this.getKeywords(event);
     }
 

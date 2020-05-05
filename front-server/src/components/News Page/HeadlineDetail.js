@@ -2,7 +2,7 @@ import React from 'react';
 
 //css
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import axios from '../../apis/api';
 //components
 import Jumbotron from 'react-bootstrap/Jumbotron'
 import Button from 'react-bootstrap/Button'
@@ -31,9 +31,30 @@ import { retrieveHeadlines } from "../../actions/Headline_Actions"
 
 
 class HeadlineDetail extends React.Component {
-
+    
+    constructor(props) {
+        super(props);
+        this.state = {
+            'keywords': []
+        }
+        this.getKeywords()
+    }
     componentDidMount() {
         this.props.retrieveHeadlines()
+    }
+
+    async getKeywords() {
+        console.log("ENTERED HERE")
+        const self = this;
+        axios.get('/keywords2?headline_id=' + this.props.match.params.id)
+            .then(function (response) {
+                self.setState({
+                    'keywords': response.data.data
+                });
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     renderHeadline(head) {
@@ -43,7 +64,20 @@ class HeadlineDetail extends React.Component {
         }
         return headline
     }
+    rand(max) {
+        return Math.floor(Math.random() * max)
+    }
 
+    renderKeywords() {
+        let colors = ['#ff9f43', '#eb4d4b', '#9c88ff', '#eb4d4b', '#4834d4', '#e056fd', '#f0932b', '#eb4d4b', '#10ac84', '#2e86de', '#54a0ff', '#feca57']
+        if (this.state.keywords[0]) {
+            return this.state.keywords[0].map((keyw) => {
+                console.log(keyw)
+                return <Topic background_color = {colors[this.rand(colors.length)]}>{keyw}</Topic>
+            })
+        }
+       
+    }
     render(){
         if (!this.props.headlines){
             return (
@@ -64,8 +98,7 @@ class HeadlineDetail extends React.Component {
                     </Wrapper>
                     
                     <Wrapper>
-                        <Topic background_color = '#9c88ff'>Immigration</Topic>
-                        <Topic background_color = '#ff6348'>Death</Topic>
+                        {this.renderKeywords()}
                     </Wrapper>
                     <Wrapper>
                         <SentimentWrapper>
@@ -118,6 +151,17 @@ const mapStateToProps = (state) => {
 export default connect(mapStateToProps, {retrieveHeadlines})(HeadlineDetail);
 
 
+
+const Background = styled.div`
+    background: url(images/Purple-Abstract.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    padding-top: 130px;
+    min-height:100vh;
+    padding-bottom: 100px;
+`
 
 const CardWrapper = styled.div`
     display: flex;

@@ -10,7 +10,7 @@ import Navbar from './components/Navbar';
 import Statistics from './components/Stats Page/Statistics'
 
 import Events from './components/News & Economy Page/Events';
-
+import Events2 from './components/News & Economy Page/Events2';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 

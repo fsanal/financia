@@ -38,7 +38,7 @@ class Bar extends React.Component {
         }
     }
 
-    searchText = (e) => {
+    searchText = (e) => { 
         var searchQuery = e.target.value; 
         if (this.timeout) clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {

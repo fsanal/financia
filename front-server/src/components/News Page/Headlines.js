@@ -99,10 +99,17 @@ const StyledSpinner = styled(Spinner)`
 `
 
 
+
 const Background = styled.div`
-    padding-top: 150px;
-    height: 100%;
-    width: 100%;
+  
+background: url(images/Purple-Abstract.jpg) no-repeat center center fixed; 
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+padding-top: 130px;
+min-height:100vh;
+padding-bottom: 100px;
 `
 
 const CardWrapper = styled.div`

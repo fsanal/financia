@@ -17,7 +17,8 @@ from database import (
     get_headline_worst_dow,
     get_pchange,
     get_all_closings,
-    get_headline_largest_range
+    get_headline_largest_range,
+    get_headlines_period
 )
 #from rake_nltk import Rake
 from textblob import TextBlob
@@ -109,6 +110,26 @@ def keywords():
         'data': keywords
     }
     return jsonify(res)
+
+@app.route('/keywords2')
+def keywords2():
+    headline_id = request.args.get('headline_id')
+    data = get_headlines_period(headline_id)
+    headlines = []
+    keywords = []
+
+    for event in data:
+        headlines.append(event['headline'])
+    
+    for headline in headlines:
+        blob = TextBlob(headline)
+        keywords.append(blob.noun_phrases)
+
+    res = {
+        'data': keywords
+    }
+    return jsonify(res)
+
 
 
 @app.route('/keyword_text')

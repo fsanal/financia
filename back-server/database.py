@@ -87,6 +87,24 @@ def get_headlines_for_event(event):
 
     return items
 
+def get_headlines_period(id):
+    items = None
+    connection = get_session()
+    print(id)
+    try:
+        with connection.cursor() as cursor:
+            sql = '''
+                    SELECT date, headline, sentiment_score
+                    FROM Headline h
+                    WHERE h.id = {}
+                  '''.format(id)
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally: 
+        print('Success!')
+
+    return items
+    
 
 def get_ids_with_term_year(term, year):
     items = None
@@ -161,7 +179,7 @@ def get_events_min_volumes():
     try:
         with connection.cursor() as cursor:
             sql = f'''
-                    SELECT ev.name as name, MIN(Volume) as min_volume
+                    SELECT ev.name as name, MIN(Volume) as min_volume, ev.id as id
                     FROM Headline h JOIN Event_Association eva ON h.id = eva.headline_id JOIN Economic_Event ev ON ev.id = eva.event_id JOIN Intraday_Turnout It ON h.date = It.date
                     GROUP BY ev.name;
                    '''
@@ -290,19 +308,22 @@ def get_volume_dji():
 def get_pchange(start_date, end_date):
     connection = get_session()
     items = None
-
+    print(start_date)
+    print(end_date)
     try:
         with connection.cursor() as cursor:
             sql = f'''
                     WITH temp1 AS (
-	                    SELECT date, index_symbol AS symbol, close
+	                    SELECT MIN(date), index_symbol AS symbol, close
 	                    FROM Intraday_Turnout
-                        WHERE date = "{start_date}"
+                        WHERE date >= "{start_date}"
+                        GROUP BY index_symbol
                     ),
                     temp2 AS (
-                        SELECT date, index_symbol AS symbol, close
+                        SELECT MAX(date), index_symbol AS symbol, close
                         FROM Intraday_Turnout
-                        WHERE date = "{end_date}"
+                        WHERE date <= "{end_date}"
+                        GROUP BY index_symbol
                     )
                     SELECT t1.symbol, 100 * (t2.close - t1.close) / t1.close AS p_change
                     FROM temp1 t1 JOIN temp2 t2
@@ -311,6 +332,8 @@ def get_pchange(start_date, end_date):
             cursor.execute(sql)
             items = cursor.fetchall()
     finally:
+        print(items)
+        print("NEWEST REQUEST", len(items))
         print('Success!')
 
     return items

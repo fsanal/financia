@@ -1,5 +1,4 @@
 import React from 'react';
-import Chart from 'react-apexcharts'
 import { Dropdown, Form, Button, Table } from 'react-bootstrap';
 import styled from "styled-components";
 import Card from 'react-bootstrap/Card';
@@ -12,7 +11,7 @@ import Spinner from 'react-bootstrap/Spinner'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Popover from 'react-bootstrap/Popover'
 import FormControl from 'react-bootstrap/FormControl';
-
+import Chart from 'react-apexcharts'
 //icons
 import i1 from '../../icons/headline icons/i1.png'
 import i2 from '../../icons/headline icons/i2.png'
@@ -33,6 +32,7 @@ import space from '../../icons/headline icons/space.svg'
 import emo from '../../icons/intelligence.svg'
 import clock from '../../icons/square.svg'
 import fil from '../../icons/tool.svg'
+import senti from '../../icons/senti.svg'
 
 class Events extends React.Component {
     constructor(props) {
@@ -45,7 +45,12 @@ class Events extends React.Component {
             'keywords': [],
             'impactful_events': [],
             'min_volumes': [],
-            'p_change': [],
+            'related': true,
+            'current_event_id': '',
+            'waiting': true,
+            'waiting_events': true, 
+            'sentiments': [],
+            'p_change':[],
 
             series: [{
                 name: "DJI",
@@ -65,11 +70,14 @@ class Events extends React.Component {
             }],
             options: {
                 chart: {
-                    height: 350,
+                    height: 400,
                     type: 'line',
                     zoom: {
                         enabled: false
                     }
+                },
+                title: {
+                    text: 'Stock Price Data Over Economic Event Timeframe'
                 },
                 dataLabels: {
                     enabled: false
@@ -89,50 +97,13 @@ class Events extends React.Component {
             }
         };
 
+        
         this.getEconomicEvents();
         this.getMinVolumes();
     }
 
     rand(max) {
         return Math.floor(Math.random() * max)
-    }
-    formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
-    }
-
-    async getPchange(start_date, end_date) {
-        const self = this;
-        axios.get('/p_change?start_date=' + start_date + '&end_date=' + end_date)
-            .then(function (response) {
-                const data = response.data.data;
-                var rows = []
-                for (var i = 0; i < data.length; i++) {
-                    const row = data[i];
-                    rows.push(
-                        <tr key={i}>
-                            <td>{row.symbol}</td>
-                            <td>{row.p_change}</td>
-                        </tr>
-                    );
-                }
-                self.setState({
-                    'p_change': rows
-                });
-                self.forceUpdate();
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
     }
 
     async getClosingPrices(start_date, end_date) {
@@ -211,6 +182,34 @@ class Events extends React.Component {
             });
     }
 
+    async getPchange(start_date, end_date) {
+        console.log("GETTING PCHANGE")
+        const self = this;
+        console.log(start_date)
+        console.log(end_date)
+        axios.get('/p_change?start_date=' + start_date + '&end_date=' + end_date)
+            .then(function (response) {
+                const data = response.data.data;
+                var rows = []
+                for (var i = 0; i < data.length; i++) {
+                    const row = data[i];
+                    rows.push(
+                        <tr key={i}>
+                            <td>{row.symbol}</td>
+                            <td>{row.p_change}</td>
+                        </tr>
+                    );
+                }
+                console.log(rows.length)
+                self.setState({
+                    'p_change': rows
+                });
+                self.forceUpdate();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     async getMinVolumes() {
         const self = this;
@@ -246,26 +245,46 @@ class Events extends React.Component {
             });
     }
 
+    formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
+    }
+
+
     async getEvent(event) {
+        
         const self = this;
         this.setState({waiting: true})
         axios.get('/event_headlines?event_id=' + event)
             .then(function (response) {
                 var headlines = [];
+                let sentiments = [];
                 var dates = [];
                 for (var i = 0; i < response.data.data.length; i++) {
                     const item = response.data.data[i];
                     headlines.push(item);
+                    sentiments.push(item.sentiment_score)
                     dates.push(new Date(item.date));
                 }
                 self.setState({
                     'headlines': headlines,
-                    'waiting': false
+                    'sentiments': sentiments
                 });
                 const maxDate = self.formatDate(new Date(Math.max.apply(null, dates)));
                 const minDate = self.formatDate(new Date(Math.min.apply(null, dates)));
                 self.getPchange(minDate, maxDate);
                 self.getClosingPrices(minDate, maxDate);
+                // self.forceUpdate();
+                self.setState({waiting: false})
             })
             .catch(function (error) {
                 console.log(error);
@@ -329,121 +348,188 @@ class Events extends React.Component {
             });
     }
 
-    formatDate(date) {
-        var d = new Date(date),
-            month = '' + (d.getMonth() + 1),
-            day = '' + d.getDate(),
-            year = d.getFullYear();
-
-        if (month.length < 2)
-            month = '0' + month;
-        if (day.length < 2)
-            day = '0' + day;
-
-        return [year, month, day].join('-');
+    getStatColor = () => {
+        if (this.state.related){
+            return 
+        } else {
+            return 'white'
+        }     
     }
 
-    async getPchange(start_date, end_date) {
-        const self = this;
-        axios.get('/p_change?start_date=' + start_date + '&end_date=' + end_date)
-            .then(function (response) {
-                const data = response.data.data;
-                var rows = []
-                for (var i = 0; i < data.length; i++) {
-                    const row = data[i];
-                    rows.push(
-                        <tr key={i}>
-                            <td>{row.symbol}</td>
-                            <td>{row.p_change}</td>
-                        </tr>
-                    );
-                }
-                self.setState({
-                    'p_change': rows
-                });
-                self.forceUpdate();
+    getStatBackColor = () => {
+        if (!this.state.related){
+            return '#9b59b6'
+        } else {
+            return 'ffffff'
+        }     
+    }
+   
+    getRelColor = () => {
+        if (this.state.related){
+            return 'white'
+        } else {
+            return 
+        }     
+    }
+
+    getRelBackColor = () => {
+        if (this.state.related){
+            return '#2ed573'
+        } else {
+            return 'ffffff'
+        }     
+    }
+
+    getRelBorderColor = () => {
+        if (this.state.related){
+            return ''
+        } else {
+            return '#DBDCE0'
+        }     
+    }
+
+
+    getStatBorderColor = () => {
+        if (!this.state.related){
+            return ''
+        } else {
+            return '#DBDCE0'
+        }     
+    }
+
+    getSentiment = () => {
+        let sentiments = this.state.sentiments
+        return(
+            <AvSentiment><StyledImg2 src = {senti}/>Average Headline Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</AvSentiment>)
+    }
+   
+
+    processEventSelection = (id) => {
+        if (!(this.state.current_event_id === id)) {
+            this.getEvent(id)
+            this.setState({current_event_id: id})
+        }
+    }
+
+    renderSelection(id) {
+        if (this.state.current_event_id === id) {
+            return "2px solid #1e90ff";
+        } else {
+            return "1.4px solid #DBDCE0";
+        }
+    }
+
+    renderEvents() {
+        if (!this.state.waiting_events) {
+            return this.state.events.map((event) => {
+                return (
+                    <EconomicCard bor = {this.renderSelection(event.id)} key = {event.id}  onClick={() => this.processEventSelection(event.id)}>
+                        {event.name}
+                    </EconomicCard>
+                )
             })
-            .catch(function (error) {
-                console.log(error);
-            });
+        } else {
+            return(
+                <>
+                    <StyledSpinner animation="border" />
+                </>
+            )
+            
+        }
     }
 
-    async getClosingPrices(start_date, end_date) {
-        const self = this;
-        axios.get('/all_closings?start_date=' + start_date + '&end_date=' + end_date)
-            .then(function (response) {
-                var dates = [];
-                var dji = [];
-                var gspc = [];
-                var ixic = [];
-                var rut = [];
-                var data = response.data.data;
 
-                for (var i = 0; i < data.length; i++) {
-                    const item = data[i];
-                    dates.push(item.date.slice(0, -13));
-                    if (item.index_symbol === 'DJI') {
-                        dji.push(item.close);
-                    }
-                    else if (item.index_symbol === 'GSPC') {
-                        gspc.push(item.close);
-                    }
-                    else if (item.index_symbol === 'IXIC') {
-                        ixic.push(item.close);
-                    }
-                    else if (item.index_symbol === 'RUT') {
-                        rut.push(item.close);
+    
+    renderHeadlines() {
+        if (this.state.waiting){
+            return(
+                <>
+                    <StyledSpinner2 animation="border" />
+                </>
+            )
+        } else {
+            const icons = [i1, i2, i3, i4, i12, i5, i6, i12, i12, i7, i12, i8, i9, i10, i12, i11, i12, i13, i14, i15];
+            
+            return this.state.headlines.map((headline, i) => {
+                var score = 0;
+                if (this.state.keywords[i]) {
+                    for (var j = 0; j < this.state.keywords[i].length; j++) {
+                        const word = this.state.keywords[i][j];
+                        score += this.count(headline.headline, word);
                     }
                 }
-
-                self.setState({
-                    series: [{
-                        name: "DJI",
-                        data: dji
-                    },
-                    {
-                        name: "GSPC",
-                        data: gspc
-                    },
-                    {
-                        name: "IXIC",
-                        data: ixic
-                    },
-                    {
-                        name: "RUT",
-                        data: rut
-                    }],
-                    options: {
-                        chart: {
-                            height: 350,
-                            type: 'line',
-                            zoom: {
-                                enabled: false
-                            }
-                        },
-                        dataLabels: {
-                            enabled: false
-                        },
-                        stroke: {
-                            curve: 'straight'
-                        },
-                        grid: {
-                            row: {
-                                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-                                opacity: 0.5
-                            },
-                        },
-                        xaxis: {
-                            categories: dates,
-                        }
-                    }
-                });
+                return (
+                    <NewsItem icon = {icons[this.rand(icons.length)]} text = {headline.headline} sentiment = {headline.sentiment_score} impact = {score} date = {headline.date}/>
+                )
             })
-            .catch(function (error) {
-                console.log(error);
-            });
+            
+        }
+    }
+    
+    onSubmit(event) {
+        event.preventDefault();
+        const form = event.currentTarget;
+        const threshold = form.elements.threshold.value;
+        this.getImpactfulEvents(threshold);
+    }
+    
+
+    renderFilter(){
+        return(
+            <>
+            <OverlayTrigger
+                                    
+                trigger = 'click'
+                placement={'bottom'}
+                overlay={
+                <StyledPopover display = {this.state.display} id={`popover-positioned-bottom`}>
+                    <StyledPopoverContent>
+                        <Form onSubmit={(e) => this.onSubmit(e)}>
+                            <Form.Group controlId="threshold">
+                                <Form.Label >Assoc. With Sentiment Score</Form.Label>
+                                <Form.Control type="text" placeholder="Enter Threshold" />
+                            </Form.Group>
+                            <SubmitButton type="submit">Submit</SubmitButton>
+                        </Form>
+                    </StyledPopoverContent>
+                </StyledPopover>
+                }
+            >
+                <FilterButton onClick = {() => this.setState({display: ''})} ><StyledImg3 src = {fil}/></FilterButton>
+            </OverlayTrigger>{' '}
+            </>
+        )
     }
 
+    renderStatline() {
+        console.log(this.state.p_change.length)
+        let item =  (this.state.p_change.length > 0 &&
+            <StyledTable striped bordered hover>
+                <thead>
+                    <tr>
+                        <th>Index Symbol</th>
+                        <th>% Change</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.state.p_change}
+                </tbody>
+            </StyledTable>)
+        return ( <><div id="chart">
+        <StyledChart options={this.state.options} series={this.state.series} type="line" height={350} />
+
+    </div>{item}{this.getSentiment()}</>)
+        //return this.getSentiment()
+    }
+
+    renderCase() {
+        if (this.state.related){
+            return this.renderHeadlines()
+        } else {
+            return this.renderStatline()
+        }
+    }
+    
     render() {
         return (
             <Back>
@@ -460,8 +546,7 @@ class Events extends React.Component {
                             <RelatedOption hov = '#9b59b6' bor = {this.getStatBorderColor} color = {this.getStatColor} b = {this.getStatBackColor} onClick = {() => this.setState({related: false})} >Statistics</RelatedOption>
                         </RelatedOptions>
                         <HeadlineView>
-                            {this.renderStatline()}
-                            {this.renderHeadlines()}
+                            {this.renderCase()}
                         </HeadlineView>
                     </RelatedView>
                 </Wrapper>
@@ -537,6 +622,24 @@ class NewsItem extends React.Component {
     )
     }
 }
+
+const AvSentiment = styled.h4`
+    margin-left: 85px;
+    margin-top: 50px;
+    padding-bottom: 20px;
+`
+
+const StyledChart = styled(Chart)`
+    margin-top: 100px !important;
+    margin-left: 10px !important;
+`
+
+const StyledTable = styled(Table)`
+    margin-top: 20px !important;
+    margin-left: 100px !important;
+    width: 450px;
+
+`
 
 const StyledPopover = styled(Popover)`
     display: ${props => props.display};
@@ -765,7 +868,7 @@ const CardWrapper = styled.div`
     margin-right: auto;
     width: 1200px;
 `
-//<h3>Average Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br />
+
 const StyledCard = styled(Card)`
     
     margin-bottom: 30px;
@@ -781,195 +884,3 @@ const StyledCard = styled(Card)`
 `
 
 export default Events;
-
-/*
-var event_items = [];
-        var headlines = [];
-        var sentiments = [];
-        var scores = [];
-        var events_table = [];
-        var volume_table = [];
-        for (var i = 0; i < this.state.events.length; i++) {
-            const event = this.state.events[i];
-            const id = event.id;
-            const name = event.name;
-            event_items.push(
-                <Dropdown.Item eventKey={id} key={i}>{name}</Dropdown.Item>
-            );
-        }
-        for (var i = 0; i < this.state.headlines.length; i++) {
-            const item = this.state.headlines[i];
-            const headline = item.headline;
-            const date = item.date;
-            const sentiment = item.sentiment_score;
-            var score = 0;
-            if (this.state.keywords[i]) {
-                for (var j = 0; j < this.state.keywords[i].length; j++) {
-                    const word = this.state.keywords[i][j];
-                    score += this.count(headline, word);
-                }
-            }
-            headlines.push(
-                <HeadlineCard key={i} headline={headline} date={date.slice(0, -13)} sentiment={sentiment} keywords={this.state.keywords[i]} impact_score={score}></HeadlineCard>
-            );
-            sentiments.push(sentiment);
-        }
-        for (var i = 0; i < this.state.impactful_events.length; i++) {
-            const item = this.state.impactful_events[i];
-            const event_name = item.name;
-            const event_year = item.year;
-            events_table.push(
-                <tr key={i}>
-                    <td>{event_name}</td>
-                    <td>{event_year}</td>
-                </tr>
-            );
-        }
-        for (var i = 0; i < this.state.min_volumes.length; i++) {
-            const item = this.state.min_volumes[i];
-            const event_name = item.name;
-            const vol = item.min_volume;
-            volume_table.push(
-                <tr key={i}>
-                    <td>{event_name}</td>
-                    <td>{vol}</td>
-                </tr>
-            );
-        }
-
-        const submitForm = (event) => {
-            onSubmit={submitForm}
-            event.preventDefault();
-            const form = event.currentTarget;
-            const threshold = form.elements.threshold.value;
-            this.getImpactfulEvents(threshold);
-        }
-        var icons = [i1, i2, i3, i4, i12, i5, i6, i12, i12, i7, i12, i8, i9, i10, i12, i11, i12, i13, i14, i15]
-        */
-
-
-        /*
-
-          <Background>
-                <div className="container">
-                    <div className="row">
-                        <div className="col-6" style={{ position: 'absolute', left: '50px', overflowX: 'hidden', overflowY: 'scroll' }}>
-                            <CardWrapper>
-                                <StyledCard>
-                                    <div className="row">
-                                        <div className="col">
-                                            <Dropdown onSelect={e => this.getEvent(e)}>
-                                                <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                                    Economic Event
-                                                </Dropdown.Toggle>
-
-                                                <Dropdown.Menu>
-                                                    {event_items}
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </div>
-                                    </div>
-
-                                    <br />
-                                    <br />
-
-                                    <div className="row">
-                                        <div className="col" style={{ margin: '20px' }}>
-                                            <h3>Most Impactful Events</h3>
-                                            <Form onSubmit={submitForm}>
-                                                <Form.Group controlId="threshold">
-                                                    <Form.Control type="text" placeholder="Enter Sentiment Threshold (eg. 0.5)" />
-                                                </Form.Group>
-                                                <Button type="submit">Submit</Button>
-                                            </Form> <br />
-                                            {this.state.impactful_events.length !== 0 &&
-                                                <Table striped bordered hover>
-                                                    <thead>
-                                                        <tr>
-                                                            <th>Event</th>
-                                                            <th>Year</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {events_table}
-                                                    </tbody>
-                                                </Table>
-                                            }
-                                        </div>
-                                    </div>
-
-                                    <br />
-                                    <br />
-
-                                    {this.state.current_event !== "" &&
-                                        <div className="row">
-                                            <div className="col" style={{ margin: '20px' }}>
-                                                <h3>Current Event:</h3>
-                                                <p>{this.state.current_event}</p>
-                                                <h3>Average Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br />
-                                                <h3>Index Performance During Event</h3>
-                                                {this.state.p_change.length > 0 &&
-                                                    <Table striped bordered hover>
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Index Symbol</th>
-                                                                <th>% Change</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.state.p_change}
-                                                        </tbody>
-                                                    </Table>}
-                                            </div>
-                                        </div>}
-                                </StyledCard>
-                            </CardWrapper>
-
-                            <div className="row">
-                                <CardWrapper>
-                                    <StyledCard>
-                                        <div className="col" style={{ margin: '20px' }} >
-                                            <h3>Minimum Intraday Volume During Economic Events</h3>
-                                            <Table striped bordered hover>
-                                                <thead>
-                                                    <tr>
-                                                        <th>Event</th>
-                                                        <th>Minimum Intraday Volume</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {volume_table}
-                                                </tbody>
-                                            </Table>
-                                        </div>
-                                    </StyledCard>
-                                </CardWrapper>
-                            </div>
-
-                            {this.state.current_event !== '' &&
-                                <div className="row">
-                                    <CardWrapper>
-                                        <StyledCard>
-                                            <h3>Index Performance During Current Event</h3>
-                                            <div id="chart">
-                                                <Chart options={this.state.options} series={this.state.series} type="line" height={350} />
-                                            </div>
-                                        </StyledCard>
-                                    </CardWrapper>
-                                </div>}
-                        </div>
-                        <div className="col-6" style={{ position: 'absolute', right: '50px', overflowX: 'hidden', overflowY: 'scroll' }}>
-                            <CardWrapper>
-                                <StyledCard>
-                                    <div className="row">
-                                        <div className="col">
-                                            {headlines}
-                                        </div>
-                                    </div>
-                                </StyledCard>
-                            </CardWrapper>
-                        </div>
-                    </div>
-                </div>
-
-                */
