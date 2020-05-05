@@ -176,7 +176,7 @@ def get_closings_dji():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date AS x, close AS y
@@ -190,11 +190,12 @@ def get_closings_dji():
 
     return items
 
+
 def get_closings_gspc():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date AS x, close AS y
@@ -208,11 +209,12 @@ def get_closings_gspc():
 
     return items
 
+
 def get_closings_ixic():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date AS x, close AS y
@@ -226,11 +228,12 @@ def get_closings_ixic():
 
     return items
 
+
 def get_closings_rut():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date AS x, close AS y
@@ -244,11 +247,12 @@ def get_closings_rut():
 
     return items
 
+
 def get_daily_change_dji():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date, high - low as diff
@@ -262,17 +266,47 @@ def get_daily_change_dji():
 
     return items
 
+
 def get_volume_dji():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT volume
                     FROM Intraday_Turnout
                     WHERE index_symbol = 'DJI'
                    '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
+def get_pchange(start_date, end_date):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp1 AS (
+	                    SELECT date, index_symbol AS symbol, close
+	                    FROM Intraday_Turnout
+                        WHERE date = "{start_date}"
+                    ),
+                    temp2 AS (
+                        SELECT date, index_symbol AS symbol, close
+                        FROM Intraday_Turnout
+                        WHERE date = "{end_date}"
+                    )
+                    SELECT t1.symbol, 100 * (t2.close - t1.close) / t1.close AS p_change
+                    FROM temp1 t1 JOIN temp2 t2
+                    ON t1.symbol = t2.symbol;
+                    '''
             cursor.execute(sql)
             items = cursor.fetchall()
     finally:
@@ -321,6 +355,25 @@ def get_headline_worst_dow():
                     FROM Headline h JOIN temp t on h.date = t.date
                     WHERE sentiment_score in (SELECT MIN(sentiment_score)
                                               FROM Headline h2 JOIN temp t2 on h2.date = t2.date)
+                    '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_all_closings(start_date, end_date):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date, close, index_symbol
+                    FROM Intraday_Turnout
+                    WHERE date >= "{start_date}"
+                    AND date <= "{end_date}";
                    '''
             cursor.execute(sql)
             items = cursor.fetchall()
