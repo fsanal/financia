@@ -278,7 +278,7 @@ class Statistics extends React.Component {
               <div className="row">
                 <div className="col-10" style={{ position: 'absolute', left: '50px', overflowX: 'hidden', overflowY: 'scroll' }}>
                     <div>
-                      <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" height={350} />
+                      <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" width={'90%'} height={350} />
                     </div>
                     <CardWrapper>
                       <StyledCard>
@@ -378,7 +378,7 @@ const CardWrapper = styled.div`
     display: flex;
     margin-left: auto;
     margin-right: auto;
-    width: 1200px;
+    width: 1800px;
 `
 
 const ScrollTable = styled(Table)`
@@ -389,9 +389,8 @@ height: 100px;
 const StyledCard = styled(Card)`
     
     margin-bottom: 30px;
-    margin-left: 6vw;
     
-    width: 35vw;
+    width: 71vw;
     // height: 100vh;
     box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
     border-radius: 16px !important;
