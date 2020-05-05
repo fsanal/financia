@@ -29,6 +29,27 @@ import styled from "styled-components"
 //actions
 import { retrieveHeadlines } from "../../actions/Headline_Actions"
 
+//icons
+import i1 from '../../icons/headline icons/i1.png'
+import i2 from '../../icons/headline icons/i2.png'
+import i3 from '../../icons/headline icons/i4.png'
+import i4 from '../../icons/headline icons/i4.png'
+import i5 from '../../icons/headline icons/i5.png'
+import i6 from '../../icons/headline icons/i6.png'
+import i7 from '../../icons/headline icons/i7.png'
+import i8 from '../../icons/headline icons/i8.png'
+import i9 from '../../icons/headline icons/i9.png'
+import i10 from '../../icons/headline icons/i10.png'
+import i11 from '../../icons/headline icons/i11.png'
+import i12 from '../../icons/headline icons/i12.png'
+import i13 from '../../icons/headline icons/i13.png'
+import i14 from '../../icons/headline icons/i14.png'
+import i15 from '../../icons/headline icons/i15.png'
+import space from '../../icons/headline icons/space.svg'
+import emo from '../../icons/intelligence.svg'
+import clock from '../../icons/square.svg'
+import fil from '../../icons/tool.svg'
+import senti from '../../icons/senti.svg'
 
 class HeadlineDetail extends React.Component {
     
@@ -79,6 +100,8 @@ class HeadlineDetail extends React.Component {
        
     }
     render(){
+        const icons = [i1, i2, i3, i4, i12, i5, i6, i12, i12, i7, i12, i8, i9, i10, i12, i11, i12, i13, i14, i15];
+        
         if (!this.props.headlines){
             return (
                 <>
@@ -86,12 +109,18 @@ class HeadlineDetail extends React.Component {
             )
         } 
         let headline = this.props.headlines[this.props.match.params.id]
+        if (!headline){
+            return (
+                <>
+                </>
+            )
+        } 
         console.log(headline)
         return (
             <>
                 <JumbotronWrapper>
                 <StyledJumbotron>
-                    <StyledImg2 src = {world_icon} />
+                    <StyledImg2 src = {icons[this.rand(icons.length)]} />
                     <Date>{headline.date.split(' ').slice(0, 4).join(' ')}</Date>
                     <Wrapper>
                         <h2>{this.renderHeadline(headline)} </h2>
@@ -102,39 +131,11 @@ class HeadlineDetail extends React.Component {
                     </Wrapper>
                     <Wrapper>
                         <SentimentWrapper>
-                            <StyledIcon icon={faLaughBeam} />
+                            <StyledImg src = {emo} />
                             <Sentiment >{`Sentiment: ${headline.sentiment_score}`}</Sentiment>
                         </SentimentWrapper>
                     </Wrapper>
-                    <CardWrapper>
-                        <StyledCard border="success" style={{}}>
-                            <Card.Body>
-                                <StyledImg src = {economy_icon} alt = "Economy Icon"/>
-                                <StyledText>
-                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                    and died a few hours later. 
-                                </StyledText>
-                            </Card.Body>              
-                        </StyledCard>
-                        <StyledCard border="success" style={{}}>
-                            <Card.Body>
-                                <StyledImg src = {train_icon} />
-                                <StyledText>
-                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                    and died a few hours later.
-                                </StyledText>
-                            </Card.Body>       
-                        </StyledCard>
-                        <StyledCard border="success" style={{}}>
-                            <Card.Body>
-                                <StyledImg src = {economy_icon} />
-                                <StyledText>
-                                    A 117-year-old woman in Mexico City finally received her birth certificate, 
-                                    and died a few hours later. 
-                                </StyledText>
-                            </Card.Body>
-                        </StyledCard>
-                    </CardWrapper>
+                    
                 </StyledJumbotron>
                 </JumbotronWrapper>
             </>
@@ -196,23 +197,25 @@ const StyledText = styled(Card.Text)`
 const StyledImg = styled.img`
     width: 100px;
     height: 100px;
-    margin-left: 81px;
+
 `
 
 const StyledImg2 = styled.img`
-    width: 150px;
-    height: 150px;
+    width: 120px;
+    height: 120px;
     margin-left: 43%;
+    margin-bottom: 30px;
 `
 
 const JumbotronWrapper = styled.div`
     padding-top: 150px;
+    padding-bottom:100px;
 `
 
 
 const StyledJumbotron = styled(Jumbotron)`
 
-    width: 1200px;
+    width: 800px;
     margin-left: auto;
     margin-right: auto;
     background-color: white !important;
