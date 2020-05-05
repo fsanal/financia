@@ -17,7 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const App = () => {
     return (<>
                 <Router history = {history}>
-                  <Route path = "/ja" component = {Navbar} />
+                  <Route path = "/" component = {Navbar} />
                   <Route path = "/headlines" component = {Headlines}/>
                   <Route path = "/events" component = {Events}/>
                   <Route path = "/detail/:id" component = {HeadlineDetail}/>

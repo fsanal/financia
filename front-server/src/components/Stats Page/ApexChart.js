@@ -56,6 +56,8 @@ class ApexChart extends Component {
     };
   }
 
+
+
   render() {
     return (
       <div className="app">

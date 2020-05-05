@@ -20,8 +20,6 @@ import { withRouter } from 'react-router';
 import styled from "styled-components"
 import axios from '../../apis/api';
 
-<<<<<<< HEAD
-=======
 var data = appleStock;
 
 const width = 750;
@@ -45,7 +43,6 @@ const yScale = scaleLinear({
   range: [yMax, 0],
   domain: [0, max(data, y)],
 });
->>>>>>> 08b649dad68f500d9ae63501c749973511adc129
 class Statistics extends React.Component {
   constructor(props) {
     super(props);
@@ -74,10 +71,7 @@ class Statistics extends React.Component {
   
   
   componentDidMount() {
-<<<<<<< HEAD
     //this.props.highest_close()
-=======
->>>>>>> 08b649dad68f500d9ae63501c749973511adc129
   }
 
   render() {

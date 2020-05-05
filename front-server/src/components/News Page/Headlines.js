@@ -98,6 +98,7 @@ const StyledSpinner = styled(Spinner)`
     color: #313896;
 `
 
+
 const Background = styled.div`
     padding-top: 150px;
     height: 100%;
