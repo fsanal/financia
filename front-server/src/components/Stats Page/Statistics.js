@@ -33,6 +33,9 @@ class Statistics extends React.Component {
     super(props);
 
     this.state = {
+      indices: ['DJI','IXIC','GPSC','RUT'],
+      current_idx: '',
+      headlines: [],
       dow_worst: [],
       scores: [],
       series1: [],
@@ -93,6 +96,29 @@ class Statistics extends React.Component {
     this.get_sent_score()
     this.get_worst_dow()
  
+  }
+
+  async getIdx(idx) {
+    const self = this;
+    console.log(this.state.indices[idx])
+    this.setState({
+        'current_idx': this.state.indices[idx]
+    });
+
+    axios.get('/biggest_change?idx=' + this.state.indices[idx])
+        .then(function (response) {
+            var heads = [];
+            for (var i = 0; i < response.data.data.length; i++) {
+                const item = response.data.data[i];
+                heads.push(item);
+            }
+            self.setState({
+                'headlines': heads
+            });
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
   }
 
   async get_worst_dow(){
@@ -201,6 +227,13 @@ class Statistics extends React.Component {
   }
 
   render() {
+    var idx_items = [];
+    for (var i = 0; i < this.state.indices.length; i++) {
+      const idx = this.state.indices[i];
+      idx_items.push(
+          <Dropdown.Item eventKey = {i} key = {i}>{idx}</Dropdown.Item>
+      );
+  }
     var worst = [];
     if(this.state.dow_worst.length > 0){
       const item2 = this.state.dow_worst[0];
@@ -215,7 +248,18 @@ class Statistics extends React.Component {
           </tr>
       );
     }
-    
+    var headline_table = [];
+    for (var i = 0; i < this.state.headlines.length; i++) {
+      const item3 = this.state.headlines[i];
+      const d = item3.date;
+      const h = item3.headline;
+      headline_table.push(
+          <tr key={i}>
+              <td>{d}</td>
+              <td>{h}</td>
+          </tr>
+      );
+    }
     var volume_table = [];
     for (var i = 0; i < this.state.scores.length; i++) {
       const item = this.state.scores[i];
@@ -227,7 +271,7 @@ class Statistics extends React.Component {
               <td>{ss}</td>
           </tr>
       );
-  }
+    }
     return(
         <Background>
             <div className = "container">
@@ -236,12 +280,50 @@ class Statistics extends React.Component {
                     <div>
                       <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" height={350} />
                     </div>
+                    <CardWrapper>
+                      <StyledCard>
+                        <div className="row">
+                            <div className="col">
+                                <Dropdown onSelect={i => this.getIdx(i)}>
+                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                        Index
+                                    </Dropdown.Toggle>
+
+                                    <Dropdown.Menu>
+                                        {idx_items}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                        </div>
+
+                        <br />
+                        <br />
+
+                        {this.state.current_idx !== "" &&
+                          <div className="row">
+                              <div className="col" style={{ margin: '20px' }}>
+                                  <h3>Current Index:</h3>
+                                    <Table striped bordered hover>
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Headline</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {headline_table}
+                                        </tbody>
+                                    </Table>
+                              </div>
+                          </div>}
+                      </StyledCard>
+                    </CardWrapper>
                     <div className="row">
                       <CardWrapper>
                           <StyledCard>
                               <div className="col" style={{ margin: '20px' }} >
                                   <h3>Sentiment Score On Day of Highest Close per Month</h3>
-                                  <Table striped bordered hover>
+                                  <ScrollTable striped bordered hover>
                                       <thead>
                                           <tr>
                                               <th>Date</th>
@@ -251,7 +333,7 @@ class Statistics extends React.Component {
                                       <tbody>
                                           {volume_table}
                                       </tbody>
-                                  </Table>
+                                  </ScrollTable>
                               </div>
                           </StyledCard>
                       </CardWrapper>
@@ -297,6 +379,11 @@ const CardWrapper = styled.div`
     margin-left: auto;
     margin-right: auto;
     width: 1200px;
+`
+
+const ScrollTable = styled(Table)`
+overflow-y: scroll !important;
+height: 100px;
 `
 
 const StyledCard = styled(Card)`

@@ -16,7 +16,8 @@ from database import (
     get_monthly_sent_scores,
     get_headline_worst_dow,
     get_pchange,
-    get_all_closings
+    get_all_closings,
+    get_headline_largest_range
 )
 #from rake_nltk import Rake
 from textblob import TextBlob
@@ -249,6 +250,16 @@ def all_closings():
     data = get_all_closings(start_date, end_date)
     for item in data:
         item['close'] = float(item['close'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/biggest_change')
+def biggest_change():
+    idx = request.args.get('idx')
+    data = get_headline_largest_range(idx)
 
     res = {
         'data': data

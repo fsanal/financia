@@ -381,3 +381,26 @@ def get_all_closings(start_date, end_date):
         print('Success!')
 
     return items
+
+def get_headline_largest_range(idx):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                    SELECT index_symbol as symbol, Intraday_Turnout.date, open-close
+                    FROM Intraday_Turnout 
+                    WHERE index_symbol = '{idx}' AND open-close = (SELECT MAX(open-close) FROM Intraday_Turnout WHERE index_symbol = '{idx}')
+                    GROUP BY symbol
+                    )
+                    SELECT temp.date, H.headline
+                    FROM Headline H JOIN temp on H.date = temp.date
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
