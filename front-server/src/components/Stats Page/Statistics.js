@@ -302,7 +302,7 @@ class Statistics extends React.Component {
                         {this.state.current_idx !== "" &&
                           <div className="row">
                               <div className="col" style={{ margin: '20px' }}>
-                                  <h3>Current Index:</h3>
+                                  <h3>Headlines On Day With Largest Change</h3>
                                     <Table striped bordered hover>
                                         <thead>
                                             <tr>
