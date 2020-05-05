@@ -19,6 +19,7 @@ import train_icon from '../../icons/training.png'
 import travel_icon from '../../icons/travel.png'
 import video_icon from '../../icons/video.png'
 import world_icon from '../../icons/world.png'
+import history from '../../history';
 
 //misc
 import { connect } from 'react-redux';
@@ -120,7 +121,7 @@ class HeadlineDetail extends React.Component {
             <>
                 <JumbotronWrapper>
                 <StyledJumbotron>
-                    <StyledImg2 src = {icons[this.rand(icons.length)]} />
+                    <StyledImg2 onClick = {() => history.push('/headlines')} src = {icons[this.rand(icons.length)]} />
                     <Date>{headline.date.split(' ').slice(0, 4).join(' ')}</Date>
                     <Wrapper>
                         <h2>{this.renderHeadline(headline)} </h2>

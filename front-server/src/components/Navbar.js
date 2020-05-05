@@ -14,6 +14,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Popover from 'react-bootstrap/Popover'
+import history from '../history';
 
 //styles
 import styled from "styled-components"
@@ -39,6 +40,9 @@ class Bar extends React.Component {
     }
 
     searchText = (e) => { 
+        if (window.location.href != "http://localhost:3000/headline") {
+            history.push('/headlines')
+        }
         var searchQuery = e.target.value; 
         if (this.timeout) clearTimeout(this.timeout);
         this.timeout = setTimeout(() => {
@@ -114,7 +118,8 @@ class Bar extends React.Component {
                             </OverlayTrigger>{' '}
                             
                         </FormWrap>
-                    
+                        <StyledButton8 onClick = {() => history.push('/events')} variant="outline-primary">Historical Events</StyledButton8>{' '}
+                        <StyledButton8 onClick = {() => history.push('/stats')} variant="outline-warning">Economy Statistics</StyledButton8>{' '}
                 </StyledNavbar>
             </>
         )
@@ -123,6 +128,10 @@ class Bar extends React.Component {
 
 
 export default connect(null, {searchHeadlines, retrieveHeadlines})(Bar);
+
+const StyledButton8 = styled(Button)`
+    margin-right: 20px;
+`
 
 const StyledPopover = styled(Popover)`
     display: ${props => props.display};
