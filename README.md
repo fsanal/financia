@@ -1,4 +1,7 @@
-# CIS 450/550 Project
+# Financia
+
+### View in Browser
+http://54.166.243.23/headlines
 
 ### Requirements
 1. >\>= Python 3.6.9
