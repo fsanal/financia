@@ -1,4 +1,5 @@
 import React from 'react';
+import Chart from 'react-apexcharts'
 import { Dropdown, Form, Button, Table } from 'react-bootstrap';
 import styled from "styled-components";
 import Card from 'react-bootstrap/Card';
@@ -44,12 +45,8 @@ class Events extends React.Component {
             'keywords': [],
             'impactful_events': [],
             'min_volumes': [],
-            'related': true,
-            'current_event_id': '',
-            'waiting': true,
-            'waiting_events': true,
-            'sentiments': [],
             'p_change': [],
+
             series: [{
                 name: "DJI",
                 data: []
@@ -265,7 +262,6 @@ class Events extends React.Component {
                     'headlines': headlines,
                     'waiting': false
                 });
-                self.setState({waiting: false})
                 const maxDate = self.formatDate(new Date(Math.max.apply(null, dates)));
                 const minDate = self.formatDate(new Date(Math.min.apply(null, dates)));
                 self.getPchange(minDate, maxDate);
@@ -333,183 +329,121 @@ class Events extends React.Component {
             });
     }
 
-    getStatColor = () => {
-        if (this.state.related){
-            return 
-        } else {
-            return 'white'
-        }     
+    formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2)
+            month = '0' + month;
+        if (day.length < 2)
+            day = '0' + day;
+
+        return [year, month, day].join('-');
     }
 
-    getStatBackColor = () => {
-        if (!this.state.related){
-            return '#9b59b6'
-        } else {
-            return 'ffffff'
-        }     
-    }
-   
-    getRelColor = () => {
-        if (this.state.related){
-            return 'white'
-        } else {
-            return 
-        }     
-    }
-
-    getRelBackColor = () => {
-        if (this.state.related){
-            return '#2ed573'
-        } else {
-            return 'ffffff'
-        }     
-    }
-
-    getRelBorderColor = () => {
-        if (this.state.related){
-            return ''
-        } else {
-            return '#DBDCE0'
-        }     
-    }
-
-
-    getStatBorderColor = () => {
-        if (!this.state.related){
-            return ''
-        } else {
-            return '#DBDCE0'
-        }     
-    }
-
-    getAverageSentiment() {
-        return(
-            <h3>Average Sentiment: {(this.state.sentiments.reduce((a, b) => a + b, 0) / this.state.sentiments.length).toFixed(2)}</h3>
-        )
-    }
-
-
-   
-
-    processEventSelection = (id) => {
-        if (!(this.state.current_event_id === id)) {
-            this.getEvent(id)
-            this.setState({current_event_id: id})
-        }
-    }
-
-    renderSelection(id) {
-        if (this.state.current_event_id === id) {
-            return "2px solid #1e90ff";
-        } else {
-            return "1.4px solid #DBDCE0";
-        }
-    }
-
-    renderEvents() {
-        if (!this.state.waiting_events) {
-            return this.state.events.map((event) => {
-                return (
-                    <EconomicCard bor = {this.renderSelection(event.id)} key = {event.id}  onClick={() => this.processEventSelection(event.id)}>
-                        {event.name}
-                    </EconomicCard>
-                )
+    async getPchange(start_date, end_date) {
+        const self = this;
+        axios.get('/p_change?start_date=' + start_date + '&end_date=' + end_date)
+            .then(function (response) {
+                const data = response.data.data;
+                var rows = []
+                for (var i = 0; i < data.length; i++) {
+                    const row = data[i];
+                    rows.push(
+                        <tr key={i}>
+                            <td>{row.symbol}</td>
+                            <td>{row.p_change}</td>
+                        </tr>
+                    );
+                }
+                self.setState({
+                    'p_change': rows
+                });
+                self.forceUpdate();
             })
-        } else {
-            return(
-                <>
-                    <StyledSpinner animation="border" />
-                </>
-            )
-            
-        }
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
+    async getClosingPrices(start_date, end_date) {
+        const self = this;
+        axios.get('/all_closings?start_date=' + start_date + '&end_date=' + end_date)
+            .then(function (response) {
+                var dates = [];
+                var dji = [];
+                var gspc = [];
+                var ixic = [];
+                var rut = [];
+                var data = response.data.data;
 
-    
-    renderHeadlines() {
-        if (this.state.waiting){
-            return(
-                <>
-                    <StyledSpinner2 animation="border" />
-                </>
-            )
-        } else {
-            const icons = [i1, i2, i3, i4, i12, i5, i6, i12, i12, i7, i12, i8, i9, i10, i12, i11, i12, i13, i14, i15];
-            let sentiments = []
-            let newslines = this.state.headlines.map((headline, i) => {
-                var score = 0;
-                if (this.state.keywords[i]) {
-                    for (var j = 0; j < this.state.keywords[i].length; j++) {
-                        const word = this.state.keywords[i][j];
-                        score += this.count(headline.headline, word);
-                        
+                for (var i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    dates.push(item.date.slice(0, -13));
+                    if (item.index_symbol === 'DJI') {
+                        dji.push(item.close);
+                    }
+                    else if (item.index_symbol === 'GSPC') {
+                        gspc.push(item.close);
+                    }
+                    else if (item.index_symbol === 'IXIC') {
+                        ixic.push(item.close);
+                    }
+                    else if (item.index_symbol === 'RUT') {
+                        rut.push(item.close);
                     }
                 }
-                sentiments.push(headline.sentiment_score)
-                return (
-                    <NewsItem icon = {icons[this.rand(icons.length)]} text = {headline.headline} sentiment = {headline.sentiment_score} impact = {score} date = {headline.date}/>
-                )
+
+                self.setState({
+                    series: [{
+                        name: "DJI",
+                        data: dji
+                    },
+                    {
+                        name: "GSPC",
+                        data: gspc
+                    },
+                    {
+                        name: "IXIC",
+                        data: ixic
+                    },
+                    {
+                        name: "RUT",
+                        data: rut
+                    }],
+                    options: {
+                        chart: {
+                            height: 350,
+                            type: 'line',
+                            zoom: {
+                                enabled: false
+                            }
+                        },
+                        dataLabels: {
+                            enabled: false
+                        },
+                        stroke: {
+                            curve: 'straight'
+                        },
+                        grid: {
+                            row: {
+                                colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+                                opacity: 0.5
+                            },
+                        },
+                        xaxis: {
+                            categories: dates,
+                        }
+                    }
+                });
             })
-            this.setState({sentiments: sentiments})
-            return newslines
-        }
-    }
-    
-    onSubmit(event) {
-        event.preventDefault();
-        const form = event.currentTarget;
-        const threshold = form.elements.threshold.value;
-        this.getImpactfulEvents(threshold);
-    }
-    
-
-    renderFilter(){
-        return(
-            <>
-            <OverlayTrigger
-                                    
-                trigger = 'click'
-                placement={'bottom'}
-                overlay={
-                <StyledPopover display = {this.state.display} id={`popover-positioned-bottom`}>
-                    <StyledPopoverContent>
-                        <Form onSubmit={(e) => this.onSubmit(e)}>
-                            <Form.Group controlId="threshold">
-                                <Form.Label >Assoc. With Sentiment Score</Form.Label>
-                                <Form.Control type="text" placeholder="Enter Threshold" />
-                            </Form.Group>
-                            <SubmitButton type="submit">Submit</SubmitButton>
-                        </Form>
-                    </StyledPopoverContent>
-                </StyledPopover>
-                }
-            >
-                <FilterButton onClick = {() => this.setState({display: ''})} ><StyledImg3 src = {fil}/></FilterButton>
-            </OverlayTrigger>{' '}
-            </>
-        )
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
-    renderStatline() {
-        let sent = this.getAverageSentiment()
-        let table = (
-            <>
-            <h3>Index Performance During Event</h3>
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>Index Symbol</th>
-                        <th>% Change</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {this.state.p_change}
-                </tbody>
-            </Table></>)
-        
-    }
-    
     render() {
         return (
             <Back>
@@ -948,7 +882,7 @@ var event_items = [];
                                                 </Form.Group>
                                                 <Button type="submit">Submit</Button>
                                             </Form> <br />
-                                            {this.state.impactful_events.length != 0 &&
+                                            {this.state.impactful_events.length !== 0 &&
                                                 <Table striped bordered hover>
                                                     <thead>
                                                         <tr>
@@ -973,6 +907,19 @@ var event_items = [];
                                                 <h3>Current Event:</h3>
                                                 <p>{this.state.current_event}</p>
                                                 <h3>Average Sentiment: {(sentiments.reduce((a, b) => a + b, 0) / sentiments.length).toFixed(2)}</h3><br />
+                                                <h3>Index Performance During Event</h3>
+                                                {this.state.p_change.length > 0 &&
+                                                    <Table striped bordered hover>
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Index Symbol</th>
+                                                                <th>% Change</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {this.state.p_change}
+                                                        </tbody>
+                                                    </Table>}
                                             </div>
                                         </div>}
                                 </StyledCard>
@@ -1003,7 +950,10 @@ var event_items = [];
                                 <div className="row">
                                     <CardWrapper>
                                         <StyledCard>
-                                            <h1>TODO: Insert Economic Graph</h1>
+                                            <h3>Index Performance During Current Event</h3>
+                                            <div id="chart">
+                                                <Chart options={this.state.options} series={this.state.series} type="line" height={350} />
+                                            </div>
                                         </StyledCard>
                                     </CardWrapper>
                                 </div>}

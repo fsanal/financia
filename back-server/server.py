@@ -8,8 +8,16 @@ from database import (
     get_impactful_events,
     get_events_min_volumes,
     get_closings_dji,
+    get_closings_gspc,
+    get_closings_ixic,
+    get_closings_rut,
     get_daily_change_dji,
-    get_volume_dji
+    get_volume_dji,
+    get_monthly_sent_scores,
+    get_headline_worst_dow,
+    get_pchange,
+    get_all_closings,
+    get_headline_largest_range
 )
 #from rake_nltk import Rake
 from textblob import TextBlob
@@ -139,13 +147,45 @@ def min_volumes():
 def dji_closings():
     data = get_closings_dji()
     for item in data:
-        item['close'] = float(item['close'])
+        item['y'] = float(item['y'])
 
     res = {
         'data': data
     }
     return jsonify(res)
 
+@app.route('/ixic_closings')
+def ixic_closings():
+    data = get_closings_ixic()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/gspc_closings')
+def gspc_closings():
+    data = get_closings_gspc()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/rut_closings')
+def rut_closings():
+    data = get_closings_rut()
+    for item in data:
+        item['y'] = float(item['y'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
 
 @app.route('/dji_daily_change')
 def dji_daily_change():
@@ -166,6 +206,69 @@ def dji_volume():
     }
     return jsonify(res)
 
+@app.route('/sent_scores')
+def sent_scores():
+    data = get_monthly_sent_scores()
+
+    for item in data:
+        item['sentiment_score'] = float(item['sentiment_score'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/dow_worst')
+def dow_worst():
+    data = get_headline_worst_dow()
+
+    for item in data:
+        item['sentiment_score'] = float(item['sentiment_score'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/p_change')
+def p_change():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    data = get_pchange(start_date, end_date)
+    for item in data:
+        item['p_change'] = float(item['p_change'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+
+@app.route('/all_closings')
+def all_closings():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    data = get_all_closings(start_date, end_date)
+    for item in data:
+        item['close'] = float(item['close'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/biggest_change')
+def biggest_change():
+    idx = request.args.get('idx')
+    data = get_headline_largest_range(idx)
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
+

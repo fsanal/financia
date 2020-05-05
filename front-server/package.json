@@ -19,6 +19,8 @@
     "@vx/scale": "0.0.196",
     "@vx/shape": "0.0.196",
     "@vx/tooltip": "0.0.196",
+    "@vx/group": "0.0.196",
+    "@vx/axis": "0.0.196",
     "apexcharts": "^3.19.0",
     "axios": "0.19.2",
     "bootstrap": "^4.4.1",

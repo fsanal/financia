@@ -177,10 +177,10 @@ def get_closings_dji():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
-                    SELECT date, close
+                    SELECT date AS x, close AS y
                     FROM Intraday_Turnout
                     WHERE index_symbol = 'DJI'
                    '''
@@ -191,11 +191,69 @@ def get_closings_dji():
 
     return items
 
+
+def get_closings_gspc():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'GSPC'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
+def get_closings_ixic():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'IXIC'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
+def get_closings_rut():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date AS x, close AS y
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'RUT'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
 def get_daily_change_dji():
     connection = get_session()
     items = None
 
-    try: 
+    try:
         with connection.cursor() as cursor:
             sql = f'''
                     SELECT date, high - low as diff
@@ -209,16 +267,137 @@ def get_daily_change_dji():
 
     return items
 
+
 def get_volume_dji():
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT volume
+                    FROM Intraday_Turnout
+                    WHERE index_symbol = 'DJI'
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+
+def get_pchange(start_date, end_date):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp1 AS (
+	                    SELECT date, index_symbol AS symbol, close
+	                    FROM Intraday_Turnout
+                        WHERE date = "{start_date}"
+                    ),
+                    temp2 AS (
+                        SELECT date, index_symbol AS symbol, close
+                        FROM Intraday_Turnout
+                        WHERE date = "{end_date}"
+                    )
+                    SELECT t1.symbol, 100 * (t2.close - t1.close) / t1.close AS p_change
+                    FROM temp1 t1 JOIN temp2 t2
+                    ON t1.symbol = t2.symbol;
+                    '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_monthly_sent_scores():
     connection = get_session()
     items = None
 
     try: 
         with connection.cursor() as cursor:
             sql = f'''
-                    SELECT volume
+                    SELECT h.date, AVG(sentiment_score) as sentiment_score
+                    FROM Intraday_Turnout It JOIN Headline h on It.date = h.date
+                    WHERE h.date IN
+                    (SELECT date FROM
+                    (SELECT date, MAX(close)
+                    FROM Intraday_Turnout temp
+                    GROUP BY Month(temp.date), Year(temp.date)) t)
+                    GROUP BY h.date;
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_headline_worst_dow():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                    SELECT *
+                    FROM Intraday_Turnout It
+                    WHERE index_symbol = 'DJI' AND It.close <= (SELECT MIN(close)
+                                                                FROM Intraday_Turnout ite 
+                                                                WHERE index_symbol = 'DJI')
+                    )
+                    SELECT h.date, h.headline, sentiment_score
+                    FROM Headline h JOIN temp t on h.date = t.date
+                    WHERE sentiment_score in (SELECT MIN(sentiment_score)
+                                              FROM Headline h2 JOIN temp t2 on h2.date = t2.date)
+                    '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_all_closings(start_date, end_date):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT date, close, index_symbol
                     FROM Intraday_Turnout
-                    WHERE index_symbol = 'DJI'
+                    WHERE date >= "{start_date}"
+                    AND date <= "{end_date}";
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_headline_largest_range(idx):
+    connection = get_session()
+    items = None
+
+    try:
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                    SELECT index_symbol as symbol, Intraday_Turnout.date, open-close
+                    FROM Intraday_Turnout 
+                    WHERE index_symbol = '{idx}' AND open-close = (SELECT MAX(open-close) FROM Intraday_Turnout WHERE index_symbol = '{idx}')
+                    GROUP BY symbol
+                    )
+                    SELECT temp.date, H.headline
+                    FROM Headline H JOIN temp on H.date = temp.date
                    '''
             cursor.execute(sql)
             items = cursor.fetchall()
