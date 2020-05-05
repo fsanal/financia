@@ -13,6 +13,9 @@ import { AxisLeft, AxisBottom } from '@vx/axis';
 import { highest_close } from "../../actions/Statistics_Actions"
 import ReactApexChart from 'react-apexcharts'
 import ApexCharts from 'apexcharts'
+import { Dropdown, Form, Button, Table } from 'react-bootstrap';
+import Card from 'react-bootstrap/Card';
+
 
 
 //misc
@@ -30,7 +33,8 @@ class Statistics extends React.Component {
     super(props);
 
     this.state = {
-      
+      dow_worst: [],
+      scores: [],
       series1: [],
 
       options1: {
@@ -86,7 +90,37 @@ class Statistics extends React.Component {
       }
     }
     this.get_closings()
+    this.get_sent_score()
+    this.get_worst_dow()
  
+  }
+
+  async get_worst_dow(){
+    const self = this;
+        axios.get('/dow_worst')
+            .then(function (response) {
+              self.setState({
+                dow_worst:response.data.data
+              })
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+  }
+
+  async get_sent_score(){
+    const self = this;
+        axios.get('/sent_scores')
+            .then(function (response) {
+              self.setState({
+                scores:response.data.data
+              })
+                
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
   }
 
   async get_closings(){
@@ -117,7 +151,6 @@ class Statistics extends React.Component {
               var target = []
               Object.assign(target, self.state.series1)
               target.push(item)
-              console.log(target)
               self.setState({
                 series1:target
               })
@@ -135,7 +168,6 @@ class Statistics extends React.Component {
               var target = []
               Object.assign(target, self.state.series1)
               target.push(item)
-              console.log(target)
               self.setState({
                 series1:target
               })
@@ -153,7 +185,6 @@ class Statistics extends React.Component {
               var target = []
               Object.assign(target, self.state.series1)
               target.push(item)
-              console.log(target)
               self.setState({
                 series1:target
               })
@@ -170,12 +201,84 @@ class Statistics extends React.Component {
   }
 
   render() {
+    var worst = [];
+    if(this.state.dow_worst.length > 0){
+      const item2 = this.state.dow_worst[0];
+      const date = item2.date;
+      const headline = item2.headline;
+      const sc = item2.sentiment_score;
+      worst.push(
+        <tr key={0}>
+              <td>{date}</td>
+              <td>{headline}</td>
+              <td>{sc}</td>
+          </tr>
+      );
+    }
+    
+    var volume_table = [];
+    for (var i = 0; i < this.state.scores.length; i++) {
+      const item = this.state.scores[i];
+      const date = item.date;
+      const ss = item.sentiment_score;
+      volume_table.push(
+          <tr key={i}>
+              <td>{date}</td>
+              <td>{ss}</td>
+          </tr>
+      );
+  }
     return(
         <Background>
             <div className = "container">
-              <div>
-                <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" height={350} />
+              <div className="row">
+                <div className="col-10" style={{ position: 'absolute', left: '50px', overflowX: 'hidden', overflowY: 'scroll' }}>
+                    <div>
+                      <ReactApexChart options={this.state.options1} series={this.state.series1} type="area" height={350} />
+                    </div>
+                    <div className="row">
+                      <CardWrapper>
+                          <StyledCard>
+                              <div className="col" style={{ margin: '20px' }} >
+                                  <h3>Sentiment Score On Day of Highest Close per Month</h3>
+                                  <Table striped bordered hover>
+                                      <thead>
+                                          <tr>
+                                              <th>Date</th>
+                                              <th>Score</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          {volume_table}
+                                      </tbody>
+                                  </Table>
+                              </div>
+                          </StyledCard>
+                      </CardWrapper>
+                  </div>
+                  <div className="row">
+                      <CardWrapper>
+                          <StyledCard>
+                              <div className="col" style={{ margin: '20px' }} >
+                                  <h3>Worst Headline on Worst Day of Dow</h3>
+                                  <Table striped bordered hover>
+                                      <thead>
+                                          <tr>
+                                              <th>Date</th>
+                                              <th>Headline</th>
+                                              <th>Score</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          {worst}
+                                      </tbody>
+                                  </Table>
+                              </div>
+                          </StyledCard>
+                      </CardWrapper>
+                  </div>
               </div>
+            </div>
     
             </div>
         </Background>
@@ -189,7 +292,26 @@ const Background = styled.div`
     height: 100%;
     width: 100%;
 `
+const CardWrapper = styled.div`
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1200px;
+`
 
+const StyledCard = styled(Card)`
+    
+    margin-bottom: 30px;
+    margin-left: 6vw;
+    
+    width: 35vw;
+    // height: 100vh;
+    box-shadow: 0 6px 15px rgba(36, 37, 38, 0.08);
+    border-radius: 16px !important;
+    border: none;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    font-family: 'Roboto', sans-serif;
+    `
 
 export default (Statistics);
 

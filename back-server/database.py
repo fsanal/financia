@@ -279,3 +279,52 @@ def get_volume_dji():
         print('Success!')
 
     return items
+
+def get_monthly_sent_scores():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    SELECT h.date, AVG(sentiment_score) as sentiment_score
+                    FROM Intraday_Turnout It JOIN Headline h on It.date = h.date
+                    WHERE h.date IN
+                    (SELECT date FROM
+                    (SELECT date, MAX(close)
+                    FROM Intraday_Turnout temp
+                    GROUP BY Month(temp.date), Year(temp.date)) t)
+                    GROUP BY h.date;
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items
+
+def get_headline_worst_dow():
+    connection = get_session()
+    items = None
+
+    try: 
+        with connection.cursor() as cursor:
+            sql = f'''
+                    WITH temp AS (
+                    SELECT *
+                    FROM Intraday_Turnout It
+                    WHERE index_symbol = 'DJI' AND It.close <= (SELECT MIN(close)
+                                                                FROM Intraday_Turnout ite 
+                                                                WHERE index_symbol = 'DJI')
+                    )
+                    SELECT h.date, h.headline, sentiment_score
+                    FROM Headline h JOIN temp t on h.date = t.date
+                    WHERE sentiment_score in (SELECT MIN(sentiment_score)
+                                              FROM Headline h2 JOIN temp t2 on h2.date = t2.date)
+                   '''
+            cursor.execute(sql)
+            items = cursor.fetchall()
+    finally:
+        print('Success!')
+
+    return items

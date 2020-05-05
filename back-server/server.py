@@ -12,7 +12,9 @@ from database import (
     get_closings_ixic,
     get_closings_rut,
     get_daily_change_dji,
-    get_volume_dji
+    get_volume_dji,
+    get_monthly_sent_scores,
+    get_headline_worst_dow
 )
 #from rake_nltk import Rake
 from textblob import TextBlob
@@ -200,6 +202,31 @@ def dji_volume():
     }
     return jsonify(res)
 
+@app.route('/sent_scores')
+def sent_scores():
+    data = get_monthly_sent_scores()
+
+    for item in data:
+        item['sentiment_score'] = float(item['sentiment_score'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
+
+@app.route('/dow_worst')
+def dow_worst():
+    data = get_headline_worst_dow()
+
+    for item in data:
+        item['sentiment_score'] = float(item['sentiment_score'])
+
+    res = {
+        'data': data
+    }
+    return jsonify(res)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0')
+
+
