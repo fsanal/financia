@@ -1,3 +1,3 @@
 import React from 'react';
 
-const ringus = "TINGU MINGU";
+const ringus = "TINGU MINGUS";
